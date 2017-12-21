@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{A38BC23E-DCCA-4FAD-BAB1-9913788B9926}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IntDir />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IntDir />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>/src;/lib/csv-parser/src;/lib/sqlite-cpp/src;/lib/sqlite-cpp/lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>/src;/lib/csv-parser/src;/lib/sqlite-cpp/src;/lib/sqlite-cpp/lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="lib\csv-parser\src\csv_reader.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Full</Optimization>
+      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</WholeProgramOptimization>
+    </ClCompile>
+    <ClCompile Include="lib\csv-parser\src\csv_stat.cpp" />
+    <ClCompile Include="lib\csv-parser\src\csv_writer.cpp" />
+    <ClCompile Include="lib\csv-parser\src\data_type.cpp" />
+    <ClCompile Include="lib\sqlite-cpp\lib\sqlite3.c" />
+    <ClCompile Include="lib\sqlite-cpp\src\sqlite_cpp.cpp" />
+    <ClCompile Include="src\csv_search.cpp" />
+    <ClCompile Include="src\csv_sql.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\print.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lib\csv-parser\src\csv_parser.h" />
+    <ClInclude Include="lib\csv-parser\tests\catch.hpp" />
+    <ClInclude Include="lib\sqlite-cpp\lib\sqlite3.h" />
+    <ClInclude Include="lib\sqlite-cpp\lib\sqlite3ext.h" />
+    <ClInclude Include="lib\sqlite-cpp\src\sqlite_cpp.h" />
+    <ClInclude Include="src\getargs.h" />
+    <ClInclude Include="src\print.h" />
+    <ClInclude Include="src\shuffle.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="docs\annotated.html" />
+    <None Include="docs\classcsv__parser_1_1CSVField-members.html" />
+    <None Include="docs\classcsv__parser_1_1CSVField.html" />
+    <None Include="docs\classcsv__parser_1_1CSVReader-members.html" />
+    <None Include="docs\classcsv__parser_1_1CSVReader.html" />
+    <None Include="docs\classcsv__parser_1_1CSVReader_1_1iterator-members.html" />
+    <None Include="docs\classcsv__parser_1_1CSVReader_1_1iterator.html" />
+    <None Include="docs\classcsv__parser_1_1CSVStat-members.html" />
+    <None Include="docs\classcsv__parser_1_1CSVStat.html" />
+    <None Include="docs\classcsv__parser_1_1CSVWriter-members.html" />
+    <None Include="docs\classcsv__parser_1_1CSVWriter.html" />
+    <None Include="docs\classcsv__parser_1_1sql_1_1SQLiteConn-members.html" />
+    <None Include="docs\classcsv__parser_1_1sql_1_1SQLiteConn.html" />
+    <None Include="docs\classcsv__parser_1_1sql_1_1SQLitePreparedStatement-members.html" />
+    <None Include="docs\classcsv__parser_1_1sql_1_1SQLitePreparedStatement.html" />
+    <None Include="docs\classcsv__parser_1_1sql_1_1SQLiteResultSet-members.html" />
+    <None Include="docs\classcsv__parser_1_1sql_1_1SQLiteResultSet.html" />
+    <None Include="docs\classes.html" />
+    <None Include="docs\csv__edit_8cpp.html" />
+    <None Include="docs\csv__parser_8h.html" />
+    <None Include="docs\csv__parser_8h_source.html" />
+    <None Include="docs\csv__reader_8cpp.html" />
+    <None Include="docs\csv__search_8cpp.html" />
+    <None Include="docs\csv__sql_8cpp.html" />
+    <None Include="docs\csv__stat_8cpp.html" />
+    <None Include="docs\csv__writer_8cpp.html" />
+    <None Include="docs\data__type_8cpp.html" />
+    <None Include="docs\dir_68267d1309a1af8e8297ef4c3efbcdba.html" />
+    <None Include="docs\files.html" />
+    <None Include="docs\functions.html" />
+    <None Include="docs\functions_func.html" />
+    <None Include="docs\functions_rela.html" />
+    <None Include="docs\functions_vars.html" />
+    <None Include="docs\getargs_8h_source.html" />
+    <None Include="docs\globals.html" />
+    <None Include="docs\globals_func.html" />
+    <None Include="docs\graph_legend.html" />
+    <None Include="docs\hierarchy.html" />
+    <None Include="docs\index.html" />
+    <None Include="docs\inherits.html" />
+    <None Include="docs\main_8cpp.html" />
+    <None Include="docs\namespacecsv__parser.html" />
+    <None Include="docs\namespacecsv__parser_1_1extra.html" />
+    <None Include="docs\namespacecsv__parser_1_1helpers.html" />
+    <None Include="docs\namespacecsv__parser_1_1print.html" />
+    <None Include="docs\namespacecsv__parser_1_1sql.html" />
+    <None Include="docs\namespacecsv__parser_1_1str.html" />
+    <None Include="docs\namespacehelpers.html" />
+    <None Include="docs\namespacemembers.html" />
+    <None Include="docs\namespacemembers_enum.html" />
+    <None Include="docs\namespacemembers_func.html" />
+    <None Include="docs\namespacemembers_vars.html" />
+    <None Include="docs\namespaces.html" />
+    <None Include="docs\print_8cpp.html" />
+    <None Include="docs\print_8h.html" />
+    <None Include="docs\print_8h_source.html" />
+    <None Include="docs\search\all_0.html" />
+    <None Include="docs\search\all_1.html" />
+    <None Include="docs\search\all_10.html" />
+    <None Include="docs\search\all_11.html" />
+    <None Include="docs\search\all_12.html" />
+    <None Include="docs\search\all_13.html" />
+    <None Include="docs\search\all_2.html" />
+    <None Include="docs\search\all_3.html" />
+    <None Include="docs\search\all_4.html" />
+    <None Include="docs\search\all_5.html" />
+    <None Include="docs\search\all_6.html" />
+    <None Include="docs\search\all_7.html" />
+    <None Include="docs\search\all_8.html" />
+    <None Include="docs\search\all_9.html" />
+    <None Include="docs\search\all_a.html" />
+    <None Include="docs\search\all_b.html" />
+    <None Include="docs\search\all_c.html" />
+    <None Include="docs\search\all_d.html" />
+    <None Include="docs\search\all_e.html" />
+    <None Include="docs\search\all_f.html" />
+    <None Include="docs\search\classes_0.html" />
+    <None Include="docs\search\classes_1.html" />
+    <None Include="docs\search\enums_0.html" />
+    <None Include="docs\search\files_0.html" />
+    <None Include="docs\search\files_1.html" />
+    <None Include="docs\search\files_2.html" />
+    <None Include="docs\search\files_3.html" />
+    <None Include="docs\search\functions_0.html" />
+    <None Include="docs\search\functions_1.html" />
+    <None Include="docs\search\functions_10.html" />
+    <None Include="docs\search\functions_11.html" />
+    <None Include="docs\search\functions_2.html" />
+    <None Include="docs\search\functions_3.html" />
+    <None Include="docs\search\functions_4.html" />
+    <None Include="docs\search\functions_5.html" />
+    <None Include="docs\search\functions_6.html" />
+    <None Include="docs\search\functions_7.html" />
+    <None Include="docs\search\functions_8.html" />
+    <None Include="docs\search\functions_9.html" />
+    <None Include="docs\search\functions_a.html" />
+    <None Include="docs\search\functions_b.html" />
+    <None Include="docs\search\functions_c.html" />
+    <None Include="docs\search\functions_d.html" />
+    <None Include="docs\search\functions_e.html" />
+    <None Include="docs\search\functions_f.html" />
+    <None Include="docs\search\namespaces_0.html" />
+    <None Include="docs\search\namespaces_1.html" />
+    <None Include="docs\search\nomatches.html" />
+    <None Include="docs\search\pages_0.html" />
+    <None Include="docs\search\related_0.html" />
+    <None Include="docs\search\variables_0.html" />
+    <None Include="docs\search\variables_1.html" />
+    <None Include="docs\search\variables_2.html" />
+    <None Include="docs\search\variables_3.html" />
+    <None Include="docs\search\variables_4.html" />
+    <None Include="docs\search\variables_5.html" />
+    <None Include="docs\search\variables_6.html" />
+    <None Include="docs\search\variables_7.html" />
+    <None Include="docs\search\variables_8.html" />
+    <None Include="docs\search\variables_9.html" />
+    <None Include="docs\search\variables_a.html" />
+    <None Include="docs\structcsv__parser_1_1CSVFileInfo-members.html" />
+    <None Include="docs\structcsv__parser_1_1CSVFileInfo.html" />
+    <None Include="docs\structcsv__parser_1_1CSVFormat-members.html" />
+    <None Include="docs\structcsv__parser_1_1CSVFormat.html" />
+    <None Include="lib\csv-parser\docs\annotated.html" />
+    <None Include="lib\csv-parser\docs\classcsv_1_1CSVField-members.html" />
+    <None Include="lib\csv-parser\docs\classcsv_1_1CSVField.html" />
+    <None Include="lib\csv-parser\docs\classcsv_1_1CSVReader-members.html" />
+    <None Include="lib\csv-parser\docs\classcsv_1_1CSVReader.html" />
+    <None Include="lib\csv-parser\docs\classcsv_1_1CSVStat-members.html" />
+    <None Include="lib\csv-parser\docs\classcsv_1_1CSVStat.html" />
+    <None Include="lib\csv-parser\docs\classcsv_1_1CSVWriter-members.html" />
+    <None Include="lib\csv-parser\docs\classcsv_1_1CSVWriter.html" />
+    <None Include="lib\csv-parser\docs\classes.html" />
+    <None Include="lib\csv-parser\docs\csv__parser_8h.html" />
+    <None Include="lib\csv-parser\docs\csv__parser_8h_source.html" />
+    <None Include="lib\csv-parser\docs\csv__reader_8cpp.html" />
+    <None Include="lib\csv-parser\docs\csv__stat_8cpp.html" />
+    <None Include="lib\csv-parser\docs\csv__writer_8cpp.html" />
+    <None Include="lib\csv-parser\docs\data__type_8cpp.html" />
+    <None Include="lib\csv-parser\docs\dir_68267d1309a1af8e8297ef4c3efbcdba.html" />
+    <None Include="lib\csv-parser\docs\files.html" />
+    <None Include="lib\csv-parser\docs\functions.html" />
+    <None Include="lib\csv-parser\docs\functions_func.html" />
+    <None Include="lib\csv-parser\docs\functions_vars.html" />
+    <None Include="lib\csv-parser\docs\hierarchy.html" />
+    <None Include="lib\csv-parser\docs\index.html" />
+    <None Include="lib\csv-parser\docs\namespacecsv.html" />
+    <None Include="lib\csv-parser\docs\namespacecsv_1_1helpers.html" />
+    <None Include="lib\csv-parser\docs\namespacecsv__parser_1_1helpers.html" />
+    <None Include="lib\csv-parser\docs\namespacemembers.html" />
+    <None Include="lib\csv-parser\docs\namespacemembers_enum.html" />
+    <None Include="lib\csv-parser\docs\namespacemembers_func.html" />
+    <None Include="lib\csv-parser\docs\namespacemembers_vars.html" />
+    <None Include="lib\csv-parser\docs\namespaces.html" />
+    <None Include="lib\csv-parser\docs\search\all_0.html" />
+    <None Include="lib\csv-parser\docs\search\all_1.html" />
+    <None Include="lib\csv-parser\docs\search\all_10.html" />
+    <None Include="lib\csv-parser\docs\search\all_11.html" />
+    <None Include="lib\csv-parser\docs\search\all_2.html" />
+    <None Include="lib\csv-parser\docs\search\all_3.html" />
+    <None Include="lib\csv-parser\docs\search\all_4.html" />
+    <None Include="lib\csv-parser\docs\search\all_5.html" />
+    <None Include="lib\csv-parser\docs\search\all_6.html" />
+    <None Include="lib\csv-parser\docs\search\all_7.html" />
+    <None Include="lib\csv-parser\docs\search\all_8.html" />
+    <None Include="lib\csv-parser\docs\search\all_9.html" />
+    <None Include="lib\csv-parser\docs\search\all_a.html" />
+    <None Include="lib\csv-parser\docs\search\all_b.html" />
+    <None Include="lib\csv-parser\docs\search\all_c.html" />
+    <None Include="lib\csv-parser\docs\search\all_d.html" />
+    <None Include="lib\csv-parser\docs\search\all_e.html" />
+    <None Include="lib\csv-parser\docs\search\all_f.html" />
+    <None Include="lib\csv-parser\docs\search\classes_0.html" />
+    <None Include="lib\csv-parser\docs\search\enums_0.html" />
+    <None Include="lib\csv-parser\docs\search\files_0.html" />
+    <None Include="lib\csv-parser\docs\search\files_1.html" />
+    <None Include="lib\csv-parser\docs\search\functions_0.html" />
+    <None Include="lib\csv-parser\docs\search\functions_1.html" />
+    <None Include="lib\csv-parser\docs\search\functions_2.html" />
+    <None Include="lib\csv-parser\docs\search\functions_3.html" />
+    <None Include="lib\csv-parser\docs\search\functions_4.html" />
+    <None Include="lib\csv-parser\docs\search\functions_5.html" />
+    <None Include="lib\csv-parser\docs\search\functions_6.html" />
+    <None Include="lib\csv-parser\docs\search\functions_7.html" />
+    <None Include="lib\csv-parser\docs\search\functions_8.html" />
+    <None Include="lib\csv-parser\docs\search\functions_9.html" />
+    <None Include="lib\csv-parser\docs\search\functions_a.html" />
+    <None Include="lib\csv-parser\docs\search\functions_b.html" />
+    <None Include="lib\csv-parser\docs\search\functions_c.html" />
+    <None Include="lib\csv-parser\docs\search\functions_d.html" />
+    <None Include="lib\csv-parser\docs\search\functions_e.html" />
+    <None Include="lib\csv-parser\docs\search\namespaces_0.html" />
+    <None Include="lib\csv-parser\docs\search\nomatches.html" />
+    <None Include="lib\csv-parser\docs\search\pages_0.html" />
+    <None Include="lib\csv-parser\docs\search\variables_0.html" />
+    <None Include="lib\csv-parser\docs\search\variables_1.html" />
+    <None Include="lib\csv-parser\docs\search\variables_2.html" />
+    <None Include="lib\csv-parser\docs\search\variables_3.html" />
+    <None Include="lib\csv-parser\docs\search\variables_4.html" />
+    <None Include="lib\csv-parser\docs\search\variables_5.html" />
+    <None Include="lib\csv-parser\docs\search\variables_6.html" />
+    <None Include="lib\csv-parser\docs\search\variables_7.html" />
+    <None Include="lib\csv-parser\docs\search\variables_8.html" />
+    <None Include="lib\csv-parser\docs\search\variables_9.html" />
+    <None Include="lib\csv-parser\docs\search\variables_a.html" />
+    <None Include="lib\csv-parser\docs\structcsv_1_1CSVFileInfo-members.html" />
+    <None Include="lib\csv-parser\docs\structcsv_1_1CSVFileInfo.html" />
+    <None Include="lib\csv-parser\docs\structcsv_1_1CSVFormat-members.html" />
+    <None Include="lib\csv-parser\docs\structcsv_1_1CSVFormat.html" />
+    <None Include="lib\sqlite-cpp\docs\annotated.html" />
+    <None Include="lib\sqlite-cpp\docs\classes.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_conn-members.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_conn.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_conn_1_1_prepared_statement-members.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_conn_1_1_prepared_statement.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_conn_1_1_result_set-members.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_conn_1_1_result_set.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_database_closed-members.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_database_closed.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_statement_closed-members.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_statement_closed.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_s_q_lite_error-members.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_s_q_lite_error.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_value_error-members.html" />
+    <None Include="lib\sqlite-cpp\docs\class_s_q_lite_1_1_value_error.html" />
+    <None Include="lib\sqlite-cpp\docs\dir_68267d1309a1af8e8297ef4c3efbcdba.html" />
+    <None Include="lib\sqlite-cpp\docs\files.html" />
+    <None Include="lib\sqlite-cpp\docs\functions.html" />
+    <None Include="lib\sqlite-cpp\docs\functions_func.html" />
+    <None Include="lib\sqlite-cpp\docs\functions_vars.html" />
+    <None Include="lib\sqlite-cpp\docs\globals.html" />
+    <None Include="lib\sqlite-cpp\docs\globals_defs.html" />
+    <None Include="lib\sqlite-cpp\docs\hierarchy.html" />
+    <None Include="lib\sqlite-cpp\docs\index.html" />
+    <None Include="lib\sqlite-cpp\docs\namespacemembers.html" />
+    <None Include="lib\sqlite-cpp\docs\namespacemembers_func.html" />
+    <None Include="lib\sqlite-cpp\docs\namespacemembers_vars.html" />
+    <None Include="lib\sqlite-cpp\docs\namespaces.html" />
+    <None Include="lib\sqlite-cpp\docs\namespace_s_q_lite.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_0.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_1.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_2.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_3.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_4.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_5.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_6.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_7.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_8.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_9.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_a.html" />
+    <None Include="lib\sqlite-cpp\docs\search\all_b.html" />
+    <None Include="lib\sqlite-cpp\docs\search\classes_0.html" />
+    <None Include="lib\sqlite-cpp\docs\search\classes_1.html" />
+    <None Include="lib\sqlite-cpp\docs\search\classes_2.html" />
+    <None Include="lib\sqlite-cpp\docs\search\classes_3.html" />
+    <None Include="lib\sqlite-cpp\docs\search\classes_4.html" />
+    <None Include="lib\sqlite-cpp\docs\search\classes_5.html" />
+    <None Include="lib\sqlite-cpp\docs\search\defines_0.html" />
+    <None Include="lib\sqlite-cpp\docs\search\files_0.html" />
+    <None Include="lib\sqlite-cpp\docs\search\functions_0.html" />
+    <None Include="lib\sqlite-cpp\docs\search\functions_1.html" />
+    <None Include="lib\sqlite-cpp\docs\search\functions_2.html" />
+    <None Include="lib\sqlite-cpp\docs\search\functions_3.html" />
+    <None Include="lib\sqlite-cpp\docs\search\functions_4.html" />
+    <None Include="lib\sqlite-cpp\docs\search\functions_5.html" />
+    <None Include="lib\sqlite-cpp\docs\search\functions_6.html" />
+    <None Include="lib\sqlite-cpp\docs\search\namespaces_0.html" />
+    <None Include="lib\sqlite-cpp\docs\search\nomatches.html" />
+    <None Include="lib\sqlite-cpp\docs\search\pages_0.html" />
+    <None Include="lib\sqlite-cpp\docs\search\variables_0.html" />
+    <None Include="lib\sqlite-cpp\docs\search\variables_1.html" />
+    <None Include="lib\sqlite-cpp\docs\sqlite__cpp_8cpp.html" />
+    <None Include="lib\sqlite-cpp\docs\sqlite__cpp_8h.html" />
+    <None Include="lib\sqlite-cpp\docs\sqlite__cpp_8h_source.html" />
+    <None Include="lib\sqlite-cpp\docs\struct_s_q_lite_1_1conn__base-members.html" />
+    <None Include="lib\sqlite-cpp\docs\struct_s_q_lite_1_1conn__base.html" />
+    <None Include="lib\sqlite-cpp\docs\struct_s_q_lite_1_1stmt__base-members.html" />
+    <None Include="lib\sqlite-cpp\docs\struct_s_q_lite_1_1stmt__base.html" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

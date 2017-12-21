@@ -1,0 +1,9 @@
+[submodule "lib/csv-parser"]
+	path = lib/csv-parser
+	url = https://github.com/vincentlaucsb/csv-parser.git
+[submodule "lib/sqlite-cpp"]
+	path = lib/sqlite-cpp
+	url = https://github.com/vincentlaucsb/sqlite-cpp.git
+[submodule "tests/csv-data"]
+	path = tests/csv-data
+	url = https://github.com/vincentlaucsb/csv-data.git

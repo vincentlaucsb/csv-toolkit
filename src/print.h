@@ -1,4 +1,5 @@
 #include <iostream>
+#include <deque>
 #include <vector>
 #include <list>
 #include <string>
@@ -14,8 +15,9 @@ namespace shuffle {
     /** @file */
 
     /** @name String Formatting Functions
-        */
-        ///@{
+    */
+    ///@{
+    string indent(string in, size_t spaces=2);
     string rpad_trim(string in, size_t n = 20, size_t trim = 80);
     vector<string> round(vector<long double> in);
     ///@}
@@ -23,9 +25,10 @@ namespace shuffle {
     /** @name Pretty Printing Functions
         */
         ///@{
-    vector<size_t> _get_col_widths(vector<vector<string>>&, size_t);
+    vector<size_t> _get_col_widths(std::deque<vector<string>>&, size_t);
     void print_record(std::vector<std::string> record);
-    void print_table(vector<vector<string>> &records,
+    vector<string> long_table(std::deque<vector<string>>&, const vector<size_t>);
+    vector<string> break_table(std::deque<vector<string>>&,
         int row_num = 0, vector<string> row_names = {},
         bool header=false);
     ///@}

@@ -13,18 +13,26 @@ namespace shuffle {
         /** Print out the first n rows of a CSV */
         CSVReader reader(infile);
         vector<string> row;
-        vector<vector<string>> records = {};
+        std::deque<vector<string>> records = {};
+        std::vector<string> print_rows;
         int i = 0;
 
         while (reader.read_row(row)) {
-            if (records.empty())
-                records.push_back(reader.get_col_names());
-
             records.push_back(row);
             i++;
 
             if (i%nrow == 0) {
-                print_table(records, i - nrow, {}, true);
+                while (!records.empty()) {
+                    records.push_front(reader.get_col_names());
+                    print_rows = break_table(records, i - records.size(), {}, true);
+                    for (auto it = print_rows.begin(); it != print_rows.end(); ++it)
+                        std::cout << *it << std::endl;
+                    std::cout << std::endl
+                        << "Press Enter to continue"
+                        << std::endl << std::endl;
+                    std::cin.get();
+                }
+
                 std::cout << std::endl
                     << "Press Enter to continue printing, or q or Ctrl + C to quit."
                     << std::endl << std::endl;
@@ -43,7 +51,7 @@ namespace shuffle {
 
         CSVReader reader(infile);
         vector<string> row;
-        vector<vector<string>> records = {};
+        std::deque<vector<string>> records = {};
 
         while (reader.read_row(row)) {
             if (records.empty())
@@ -56,7 +64,7 @@ namespace shuffle {
             }
 
             if (max_rows == 0) {
-                print_table(records);
+                // print_table(records);
                 std::cout << std::endl
                     << "Press Enter to continue searching, or q or Ctrl + C to quit."
                     << std::endl << std::endl;

@@ -6,6 +6,8 @@
 
 # Visual Studio
 *.vs
+*.*log
+*.pdb
 Debug/
 Release/
 

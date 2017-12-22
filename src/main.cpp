@@ -4,7 +4,6 @@
 #define print(a) std::cout << a << std::endl
 #define hrule(a) std::cout << (rep("-", a)) << std::endl;
 #define skip std::cout << std::endl
-#define indent(a, b) std::cout << rep("  ", b) << a << std::endl
 #define menu(a, b) print_rows.push_back({ a, b })
 
 #include "shuffle.h"
@@ -67,33 +66,42 @@ void print_help() {
               << R"( `'.'.  | | | | | \_/ |, | |    | |    | || \__., )" << std::endl
               << R"([\__) )[___]|__]'.__.'_/[___]  [___]  [___]'.__.' )" << std::endl;
                                                   
-    skip;
+    skip; skip;
 
-    vector<vector<string>> print_rows;
+    deque<vector<string>> print_rows;
 
     print("Basic Usage");
-    hrule(80);
+    hrule(100);
     menu("shuffle [file]", "Pretty print a file to the terminal");
     menu("shuffle [option] [args]", "See menu below");
 
-    print_table(print_rows, -1);
+    vector<string> options = long_table(print_rows, { 40, 60 });
+    for (auto it = options.begin(); it != options.end(); ++it)
+        std::cout << *it << std::endl;
+    print_rows.clear();
+
     skip;
 
     print("Options");
-    hrule(80);
+    hrule(100);
     menu("info [file]", "Display basic CSV information");
     menu("grep [file] [col] [regex]",
         "Print all rows matching a regular expression");
     menu("stat [file]", "Calculate statistics");
     menu("csv [input 1] [input 2] ... [output]",
-        "Reformat one or more input files into a "
-        "single RFC 1480 compliant CSV file");
+         "Reformat one or more input files into a "
+         "single RFC 4180 compliant CSV file");
     menu("json [input] [output]", "Newline Delimited JSON Output");
     menu("sql [input] [output]", "Transform CSV file into a SQLite3 database");
-    menu("query [filename] [query]", "Query a SQLite database");
+    menu("query [filename] [query (optional)]",
+         "Query a SQLite database. If no query is specified, "
+         "then this program will display the database schema "
+         "and turn into an interactive SQLite client. ");
     menu("join [input 1] [input 2]", "Join two CSV files on their common fields");
 
-    print_table(print_rows, -1);
+    options = long_table(print_rows, { 40, 60 });
+    for (auto it = options.begin(); it != options.end(); ++it)
+        std::cout << *it << std::endl;
 
     /*
     print("sample [input] [output] [n]", 1);
@@ -191,7 +199,7 @@ int cli_stat(deque<string> str_args) {
 
     vector<string> col_names = calc.get_col_names();
     vector<unordered_map<string, int>> counts = calc.get_counts();
-    vector<vector<string>> print_rows = {
+    deque<vector<string>> print_rows = {
         col_names,
         round(calc.get_mean()),
         round(calc.get_variance()),
@@ -207,7 +215,7 @@ int cli_stat(deque<string> str_args) {
     // Print basic stats
     print("Summary Statistics");
     hrule(120); skip;
-    print_table(print_rows, -1, row_names);
+    break_table(print_rows, -1, row_names);
     skip;
 
     /**
@@ -251,13 +259,13 @@ int cli_stat(deque<string> str_args) {
         }
     }
 
-    print_table(print_rows, -1);
+    //print_table(print_rows, -1);
     return 0;
 }
 
 int cli_info(string filename) {
     CSVFileInfo info = get_file_info(filename);
-    vector<vector<string>> records;
+    deque<vector<string>> records;
     std::string delim = "";
     delim += info.delim;
 
@@ -269,7 +277,7 @@ int cli_info(string filename) {
     for (size_t i = 0; i < info.col_names.size(); i++)
         records.push_back({"[" + std::to_string(i) + "]", info.col_names[i]});
 
-    print_table(records, -1);
+    //print_table(records, -1);
     return 0;
 }
 
@@ -427,7 +435,7 @@ int cli_query(deque<string> str_args) {
          *  CREATE TABLE table (A text, B int);
          *  CREATE TABLE table (A text, B int);
          */
-        vector<vector<string>> rows;
+        deque<vector<string>> rows;
         while (results.next())
             rows.push_back(results.get_row());
 
@@ -435,7 +443,7 @@ int cli_query(deque<string> str_args) {
             assert(rows[0].size() == 1);
 
         // Parse the table names and column names
-        vector<vector<string>> print_rows = { {} };
+        deque<vector<string>> print_rows = { {} };
         auto print_rows_it = print_rows.begin();
         std::regex table_name("CREATE TABLE\\s(.*)\\s\\(");
         std::regex columns("\\((.*)\\)");
@@ -452,7 +460,7 @@ int cli_query(deque<string> str_args) {
 
         std::cout << "Database Schema" << std::endl;
         print(rep("=", 120)); skip;
-        print_table(print_rows);
+        //print_table(print_rows);
         results.close();
 
         std::string user_input;
@@ -472,7 +480,7 @@ int cli_query(deque<string> str_args) {
                     else {
                         for (size_t i = 0; i < page_row_limit && query.next(); i++)
                             print_rows.push_back(query.get_row());
-                        print_table(print_rows);
+                        //print_table(print_rows);
                     }
 
                     std::cout << std::endl
@@ -485,11 +493,11 @@ int cli_query(deque<string> str_args) {
     else {
         query = str_args.at(1);
         auto results = db.query(query);
-        vector<vector<string>> print_rows;
+        deque<vector<string>> print_rows;
 
         for (size_t i = 0; i < page_row_limit && results.next(); i++)
             print_rows.push_back(results.get_row());
-        print_table(print_rows);
+        //print_table(print_rows);
     }
 
     return 0;

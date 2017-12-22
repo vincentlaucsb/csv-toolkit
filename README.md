@@ -1,44 +1,19 @@
-# Yet Another... CSV Parser
-[![Build Status](https://travis-ci.org/vincentlaucsb/csv-parser.svg?branch=master)](https://travis-ci.org/vincentlaucsb/csv-parser)
-[![codecov](https://codecov.io/gh/vincentlaucsb/csv-parser/branch/master/graph/badge.svg)](https://codecov.io/gh/vincentlaucsb/csv-parser)
+# shuffle
+Shuffle is a command line tool for working with and transforming delimiter-separated values (DSV) files, such as CSV (RFC 4180), tab-delimited TXT, and so on.
 
-## Why?
-There's plenty of other CSV parsers in the wild, but I had a hard time 
-finding what I wanted. So I created this library with these goals in mind:
- * Reasonable performance
- * Full RFC 4180 compliance
- * Well tested
- * [Well documented](http://vincela.com/csv-parser/)
- 
-Moreover, a CSV parser by itself is pretty boring--it's what you do with the data that matters.
-I wanted a parser that was **flexible** and **extensible** with a simple API. Keep reading 
-for a list of extra features built into the library, or read the documentation to discover
-ways to extend it.
+![Screenshot of shuffle in action](https://raw.githubusercontent.com/vincentlaucsb/shuffle/master/screenshots/pretty-print.png)
+(Shuffle can correctly guess most common delimiters. [The file above](https://github.com/vincentlaucsb/csv-data/blob/cd3d01bf60998ca7cf27759404225f60eb23564d/real_data/2009PowerStatus.txt) is pipe-delimited.)
 
-## Building
-Incorporating this CSV parser into your project only requires a compiler that speaks C++11, such as g++, clang++, or Microsoft Visual C++.
-
-**Protip:** Use the `-O3` flag for g++/clang++ and `-Ox` flag for MSVC for faster parsing
- 
 ## Features
-### Incremental Streaming
-CSV data can be read directly from a file, or fed in piecewise via strings.
+A full list of features can be listed by typing `shuffle` in the terminal:
+ * Pretty printing
+ * Joining, merging, and reordering/subsetting
+ * Calculating statistics and frequency counts for each column
+ * Converting files to JSON and SQLite databases (with type-casting!)
 
-### CSV Output
-Since the parser also works with other delimiters, you can use this to convert--for example--
-tab separated values files to CSVs. Furthermore, you can also use this to clean up 
-existing CSV files. The parser automatically ensures all rows have a consistent length,
-and has options to change how fields are quoted.
+## Why Shuffle?
+Because life is short and RAM isn't cheap. Unlike many other tools, Shuffle is designed for speed and memory efficiency and can take advantage of multi-core processors.
 
-### JSON Output
-CSV data can be converted into newline-delimited JSON, with automatic RFC 7159 compliant escaping.
+For example, on my machine it takes Python's `pandas` about 32 seconds to convert a 150MB comma-separated TXT file to a SQLite3 database, compared to 12 seconds for Shuffle. It also does this with at most 50MB of memory, whereas `pandas` eats your RAM for breakfast, lunch, and dinner.
 
-### Statistics
-With this library, you can compute the mean, variance, and other statistics, as well as build
-frequency counters. Because online algorithms are used, there's no need to keep an entire
-4GB CSV in memory.
-   
-#### Data Type Inference
-This library can quickly scan a CSV file and report back on what data types are found in 
-each column (while simultaneously cleaning it). This is very useful for copying files to
-SQL databases.
+Similarly, it takes Shuffle just under 3 seconds to generate summary statistics and frequency counts [for this 80MB CSV](https://github.com/vincentlaucsb/csv-data/blob/cd3d01bf60998ca7cf27759404225f60eb23564d/real_data/2015_StateDepartment.csv). On the other hand, `CSVKit`--a popular Python package, still hasn't finished running even after 4 minutes.

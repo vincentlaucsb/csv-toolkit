@@ -15,19 +15,25 @@ sudo: required
 language:
 - cpp
 script:
-- if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then export CC=gcc-6; export CXX=g++-6;
-  make shuffle; fi;
-- if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then make shuffle; fi;
+- if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+    export CC=gcc-6;
+    export CXX=g++-6;
+    export OUTPUT_NAME=shuffle-linux-x86-64
+    make shuffle;
+    fi;
+- if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+    export OUTPUT_NAME=shuffle-mac-x86-64
+    make shuffle;
+    fi;
 # after_success:
 # - if [ "$CXX" == "g++-6" ]; then cd test_results; bash <(curl -s https://codecov.io/bash);
 #   fi;
 deploy:
   provider: releases
   user: vincentlaucsb
-  file: shuffle
+  file: shuffle-mac-x86-64
   skip_cleanup: true
   on:
     os: osx
-    tags: true
   password:
     secure: Rfv8adDQhYSdZOgl8hHNvU4PTnE1AC+cB6f/UQIWm3LVrG66cRP9Jdjy3ufaOSHs9FMOaFGsHrhlc5Lnwme8uqLXBzAutaC3ACTHsKX5B2uhTHfMRPWWneJCfAwSI5v/W6Pc8Na6crINwypL+na1v/omq4b3QkMZy8vwqA9nmSYCNJKt5sj47yDQl+m9u0RbR4iIcEzQc4e9OfmXEsZhz9g2wL9lMcXunr75IeOLHntaLdKubfXNncRhwVcnMH94M33seWbyW6jqnG04k+dCngS/+vkPQ8OUZwJZlgJpYx8iuT3hpS9xyiUhsAduBUzGUiUT9jDexyQLvts/VKALEutLezgaPKNEfaQDcbJaYJwqqgH0/fv7Q5jjdjKOC9Y6+o5EXiKXSDRq0La8z6Qr4mvE74rRl10lzdQdojXRqKFr3WE+tGmZaMuoMzz3BNfmwyp+hYsBHjGgPA9oSCjrAeYJbD9Bzk95AhkiAlbwZGXUOB8tjPu+zNEWuliQsGQJqXoILhNvBCEd41BffYnm5j25g+9uWK2ADBVXlhSPsFndBLNVmYJpeV6K6i0GftFiqJP8pjHToDcLGKzLWbmGCAQzPxGfdUk4+hUCwvUn5k6MvolEvTAp7h+wngxlpakV4CJzruneg/91dtqFOmVWxyfyr+MdXaju2Osc2AlPG9g=

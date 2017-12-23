@@ -34,4 +34,4 @@ build/csv_reader.o:
 	
 # Shuffle
 shuffle: build/sqlite_cpp.o build/csv_reader.o
-	$(CXX) -o shuffle $(wildcard build/*.o) $(wildcard src/*.cpp) $(CFLAGS) $(TAR_FLAG)
+	$(CXX) -o $(OUTPUT_NAME) $(wildcard build/*.o) $(wildcard src/*.cpp) $(CFLAGS) $(TAR_FLAG)

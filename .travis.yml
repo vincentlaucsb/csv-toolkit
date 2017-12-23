@@ -14,12 +14,12 @@ language:
 #before_script:
 #  - sudo pip install pexpect
 script:
-  - if [[ "${TRAVIS_OS_NAME}" == "linux"]]; then
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       export CC=gcc-6;
       export CXX=g++-6;
       make shuffle;
       fi;
-  - if [[ "${TRAVIS_OS_NAME}" == "osx"]]; then
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       export TAR_FLAG=-target x86_64-darwin;
       make shuffle;
       fi; 

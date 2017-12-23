@@ -19,10 +19,14 @@ script:
   export OUTPUT_NAME=shuffle-linux-x86-64 make shuffle; fi;
 - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then export OUTPUT_NAME=shuffle-mac-x86-64;
   make shuffle; fi;
+before_deploy:
+  git tag v0.1.0
 deploy:
   provider: releases
+  skip_cleanup: true
   api_key:
     secure: M2luKs6sx0tvCmnBLYttWSgUlALE8Kug6RloBIn9diqLjbIRYxEUhCtXxOp9/tt4/t/n1KDFYv9keQEDuw19FQllaBfY1Q77EQfoLSpMnzQ5dvemnLpg0I17YsLBdpMscpYp2m/tJm9HHz0Nx1kq2E9Yf9I5bV1mk01/xrxx2SM3Udq0viNpW9n03eOR65xAvEzmdJfaw8NAGXr9gGCNapb24RSHBeI53AnMjqc7cmykeEvMsa0P8j99MAmBOJ0+/b6op4PWqB1WjiEZrpV2If/8ZY0crnFJFMKJDr7gj1cJpufHrOfYDj4CbeSnohlxWuWdSOkY8cnNphg/9lBE6dF/vWs8GaPGWzReQSs455uoRFnKl+aAtx/oziNPIbPhS2KHyAMHEKoG9tVcNDaulu66bQZZpml6NLDLPRgLs9q2BaOR7r4KTHnzypXlHejUl6/SK9Xt05N4wBklSscWNWYBZ1+0QQ9Kh1voLVzuxTf6UGDx3HzdzsT7lYCMrC3UWazLoi0Tbcp20G4fsfAyyPpDPgwWCmxq0pwE76SX0RLCecJ4WJuoF6TeV0TTYE7Z4yUkaeSptoZXx/OBR0ubheQ22pADr24ww2NEc0sku3snDyMruXSNObjFjOmGmgvtn5um7Py8J7wI4eU9uUz8f/a74ZixZ6LSm/SiiKeOdSI=
   file: shuffle-mac-x86-64
   on:
+    os: osx
     repo: vincentlaucsb/shuffle

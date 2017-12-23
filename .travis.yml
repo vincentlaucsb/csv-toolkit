@@ -15,25 +15,14 @@ sudo: required
 language:
 - cpp
 script:
-- if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-    export CC=gcc-6;
-    export CXX=g++-6;
-    export OUTPUT_NAME=shuffle-linux-x86-64
-    make shuffle;
-    fi;
-- if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-    export OUTPUT_NAME=shuffle-mac-x86-64
-    make shuffle;
-    fi;
-# after_success:
-# - if [ "$CXX" == "g++-6" ]; then cd test_results; bash <(curl -s https://codecov.io/bash);
-#   fi;
+- if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then export CC=gcc-6; export CXX=g++-6;
+  export OUTPUT_NAME=shuffle-linux-x86-64 make shuffle; fi;
+- if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then export OUTPUT_NAME=shuffle-mac-x86-64;
+  make shuffle; fi;
 deploy:
   provider: releases
-  user: vincentlaucsb
+  api_key:
+    secure: M2luKs6sx0tvCmnBLYttWSgUlALE8Kug6RloBIn9diqLjbIRYxEUhCtXxOp9/tt4/t/n1KDFYv9keQEDuw19FQllaBfY1Q77EQfoLSpMnzQ5dvemnLpg0I17YsLBdpMscpYp2m/tJm9HHz0Nx1kq2E9Yf9I5bV1mk01/xrxx2SM3Udq0viNpW9n03eOR65xAvEzmdJfaw8NAGXr9gGCNapb24RSHBeI53AnMjqc7cmykeEvMsa0P8j99MAmBOJ0+/b6op4PWqB1WjiEZrpV2If/8ZY0crnFJFMKJDr7gj1cJpufHrOfYDj4CbeSnohlxWuWdSOkY8cnNphg/9lBE6dF/vWs8GaPGWzReQSs455uoRFnKl+aAtx/oziNPIbPhS2KHyAMHEKoG9tVcNDaulu66bQZZpml6NLDLPRgLs9q2BaOR7r4KTHnzypXlHejUl6/SK9Xt05N4wBklSscWNWYBZ1+0QQ9Kh1voLVzuxTf6UGDx3HzdzsT7lYCMrC3UWazLoi0Tbcp20G4fsfAyyPpDPgwWCmxq0pwE76SX0RLCecJ4WJuoF6TeV0TTYE7Z4yUkaeSptoZXx/OBR0ubheQ22pADr24ww2NEc0sku3snDyMruXSNObjFjOmGmgvtn5um7Py8J7wI4eU9uUz8f/a74ZixZ6LSm/SiiKeOdSI=
   file: shuffle-mac-x86-64
-  skip_cleanup: true
   on:
-    os: osx
-  password:
-    secure: Rfv8adDQhYSdZOgl8hHNvU4PTnE1AC+cB6f/UQIWm3LVrG66cRP9Jdjy3ufaOSHs9FMOaFGsHrhlc5Lnwme8uqLXBzAutaC3ACTHsKX5B2uhTHfMRPWWneJCfAwSI5v/W6Pc8Na6crINwypL+na1v/omq4b3QkMZy8vwqA9nmSYCNJKt5sj47yDQl+m9u0RbR4iIcEzQc4e9OfmXEsZhz9g2wL9lMcXunr75IeOLHntaLdKubfXNncRhwVcnMH94M33seWbyW6jqnG04k+dCngS/+vkPQ8OUZwJZlgJpYx8iuT3hpS9xyiUhsAduBUzGUiUT9jDexyQLvts/VKALEutLezgaPKNEfaQDcbJaYJwqqgH0/fv7Q5jjdjKOC9Y6+o5EXiKXSDRq0La8z6Qr4mvE74rRl10lzdQdojXRqKFr3WE+tGmZaMuoMzz3BNfmwyp+hYsBHjGgPA9oSCjrAeYJbD9Bzk95AhkiAlbwZGXUOB8tjPu+zNEWuliQsGQJqXoILhNvBCEd41BffYnm5j25g+9uWK2ADBVXlhSPsFndBLNVmYJpeV6K6i0GftFiqJP8pjHToDcLGKzLWbmGCAQzPxGfdUk4+hUCwvUn5k6MvolEvTAp7h+wngxlpakV4CJzruneg/91dtqFOmVWxyfyr+MdXaju2Osc2AlPG9g=
+    repo: vincentlaucsb/shuffle

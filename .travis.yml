@@ -17,7 +17,7 @@ language:
 script:
 - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then export CC=gcc-6; export CXX=g++-6;
   make shuffle; fi;
-- if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then make shuffle; git tag "v0.1.0"; fi;
+- if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then make shuffle; fi;
 # after_success:
 # - if [ "$CXX" == "g++-6" ]; then cd test_results; bash <(curl -s https://codecov.io/bash);
 #   fi;

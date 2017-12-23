@@ -253,7 +253,6 @@ namespace shuffle {
 
         CSVWriter writer(outfile);
         SQLite::Conn db(db_name);
-        const char * unused;
 
         // Compose Join Statement
         char join_statement[500];

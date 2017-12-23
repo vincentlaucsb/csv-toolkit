@@ -5,6 +5,8 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-6', 'valgrind']
+    - os: osx
+      compiler: clang
 dist: trusty
 sudo: required
 language:
@@ -12,9 +14,15 @@ language:
 #before_script:
 #  - sudo pip install pexpect
 script:
-  - export CC=gcc-6
-  - export CXX=g++-6
-  - make test_all
+  - if [[ "${os}" == "linux"]]; then
+      export CC=gcc-6;
+      export CXX=g++-6;
+      make shuffle;
+      fi;
+  - if [[ "${os}" == "osx"]]; then
+      export TAR_FLAG=-target x86_64-darwin;
+      make shuffle;
+      fi; 
 after_success:
   - if [ "$CXX" == "g++-6" ]; then
         cd test_results;

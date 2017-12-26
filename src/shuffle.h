@@ -21,6 +21,10 @@
 namespace shuffle {
     /** @file */
 
+    std::vector<long double> histogram(std::string filename,
+        std::string col_name,
+        size_t bins=20);
+
     /** @name Search Functions */
     ///@{
     void head(std::string infile, int nrow = 100, std::vector<int> subset = {});

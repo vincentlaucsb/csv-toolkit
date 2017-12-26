@@ -7,10 +7,11 @@
 #define menu(a, b) print_rows.push_back({ a, b })
 
 #include "shuffle.h"
-#include "assert.h"
+#include "svg.h"
 #include "print.h"
 #include "getargs.h"
 #include "string.h"
+#include <assert.h>
 #include <regex>
 #include <set>
 
@@ -31,6 +32,7 @@ int cli_rearrange(deque<string>, deque<string>);
 int cli_sql(deque<string>);
 int cli_query(deque<string>);
 int cli_join(deque<string>);
+int cli_hist(deque<string>);
 
 string rep(string in, int n) {
     // Repeat and concatenate a string multiple times
@@ -91,6 +93,8 @@ void print_help() {
     menu("csv [input 1] [input 2] ... [output]",
          "Reformat one or more input files into a "
          "single RFC 4180 compliant CSV file");
+    menu("hist [file] [col]",
+         "Generate a histogram for a column");
     menu("json [input] [output]", "Newline Delimited JSON Output");
     menu("sql [input] [output]", "Transform CSV file into a SQLite3 database");
     menu("query [filename] [query (optional)]",
@@ -175,6 +179,8 @@ int main(int argc, char* argv[]) {
             return cli_query(str_args);
         else if (command == "join")
             return cli_join(str_args);
+        else if (command == "hist")
+            return cli_hist(str_args);
 		else
             head(command, 100); // Assume first arg is a filename
 	}
@@ -514,5 +520,15 @@ int cli_join(deque<string> str_args) {
         column2 = str_args.at(4);
 
     csv_join(file1, file2, outfile, column1, column2);
+    return 0;
+}
+
+int cli_hist(deque<string> str_args) {
+    string file = str_args.at(0);
+    string col = str_args.at(1);
+
+    Graphs::Histogram hist(file, col, 20);
+    hist.to_svg(file + ".svg");
+
     return 0;
 }

@@ -29,4 +29,5 @@ deploy:
   file: shuffle-mac-x86-64
   on:
     os: osx
+    tags: true
     repo: vincentlaucsb/shuffle

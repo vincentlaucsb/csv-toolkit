@@ -7,7 +7,7 @@
 # Visual Studio
 *.vs
 *.*log
-*.pdb
+*.*db
 Debug/
 Release/
 

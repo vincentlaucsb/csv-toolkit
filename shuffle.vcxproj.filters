@@ -45,6 +45,12 @@
     <ClCompile Include="src\print.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\svg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\csv-parser\tests\catch.hpp">
@@ -69,6 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lib\csv-parser\src\csv_parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\svg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

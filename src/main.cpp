@@ -32,7 +32,8 @@ int cli_rearrange(deque<string>, deque<string>);
 int cli_sql(deque<string>);
 int cli_query(deque<string>);
 int cli_join(deque<string>);
-int cli_hist(deque<string>);
+int cli_hist(deque<string>, unordered_map<string, string> options);
+int cli_scatter(deque<string>, unordered_map<string, string>);
 
 string rep(string in, int n) {
     // Repeat and concatenate a string multiple times
@@ -126,13 +127,14 @@ int main(int argc, char* argv[]) {
     string delim = "";
 	deque<string> str_args;
     deque<string> flags;
+    unordered_map<string, string> options;
 
 	if (argc == 1) {
 		print_help();
         return 0;
 	}
     else {
-        int fail = getargs(argc, argv, str_args, flags);
+        int fail = getargs(argc, argv, str_args, flags, options);
         if (fail == 1) {
             std::cerr << "Invalid syntax" << std::endl;
             return 1;
@@ -180,7 +182,9 @@ int main(int argc, char* argv[]) {
         else if (command == "join")
             return cli_join(str_args);
         else if (command == "hist")
-            return cli_hist(str_args);
+            return cli_hist(str_args, options);
+        else if (command == "scatter")
+            return cli_scatter(str_args, options);
 		else
             head(command, 100); // Assume first arg is a filename
 	}
@@ -523,12 +527,32 @@ int cli_join(deque<string> str_args) {
     return 0;
 }
 
-int cli_hist(deque<string> str_args) {
+int cli_hist(deque<string> str_args, unordered_map<string, string> options) {
     string file = str_args.at(0);
     string col = str_args.at(1);
+    string title = options["title"];
+    string xlab = options["xlab"];
+    string ylab = options["ylab"];
+    size_t bins = 20;
 
-    Graphs::Histogram hist(file, col, 20);
+    if (options.find("bin") != options.end())
+        bins = (size_t)std::stoi(options["bin"]);
+
+    Graphs::Histogram hist(file, col, title, xlab, ylab, bins);
     hist.to_svg(file + ".svg");
+
+    return 0;
+}
+
+int cli_scatter(deque<string> str_args,
+    unordered_map<string, string> options) {
+    string file = str_args.at(0);
+    string x = str_args.at(1);
+    string y = str_args.at(2);
+    string title = options["title"];
+
+    Graphs::Scatterplot scatter(file, x, y, title);
+    scatter.to_svg(file + ".svg");
 
     return 0;
 }

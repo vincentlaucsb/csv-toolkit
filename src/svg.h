@@ -1,4 +1,5 @@
 #include <map>
+#include <deque>
 #include <vector>
 #include <string>
 #include <memory>
@@ -43,15 +44,17 @@ namespace SVG {
         }
 
         template<typename T>
-        void add_child(T& node) {
+        Element* add_child(T& node) {
+            /** Also return a pointer to the element added */
             this->children.push_back(std::make_shared<Element>(node));
+            return this->children.back().get();
         }
 
         std::map < std::string, std::string > attr;
+        std::string content;
 
     protected:
         std::string tag;
-        std::string content;
         std::vector<std::shared_ptr<Element>> children;
     };
 
@@ -64,6 +67,7 @@ namespace SVG {
 
     class Text : public Element {
     public:
+        Text() { tag = "text"; };
         Text(int x, int y, std::string _content) {
             tag = "text";
             set_attr("x", std::to_string(x));
@@ -103,8 +107,8 @@ namespace SVG {
     public:
         Circle(int cx, int cy, int radius) :
             Element("circle", {
-                {"x", std::to_string(cx)},
-                {"y", std::to_string(cy)},
+                {"cx", std::to_string(cx)},
+                {"cy", std::to_string(cy)},
                 {"r", std::to_string(radius)}
             }) {};
     };
@@ -124,6 +128,7 @@ namespace Graphs {
     class Graph {
     public:
         Graph() {};
+        void init();
         SVG::Group make_x_axis();
         SVG::Group make_y_axis();
         void to_svg(const std::string filename);
@@ -166,6 +171,8 @@ namespace Graphs {
         int margin_top = 50;     /*< Also includes space for title */
 
         // Used to map data values to SVG width/height values
+        long double domain_min = 0;
+        long double domain_max = 0;
         long double range_min = 0; /*< Minimum value of data (y-axis) */
         long double range_max = 0; /*< Maximum value of data (y-axis) */
 
@@ -173,15 +180,18 @@ namespace Graphs {
         int bar_spacing = 2;
         int tick_size = 5;
 
-        vector<string> x_tick_labels;
+        vector<long double> x_tick_labels;
 
         SVG::SVG root;
+        SVG::Element* title = nullptr; /*< Pointer set by constructor */
+        SVG::Element* xlab = nullptr;
+        SVG::Element* ylab = nullptr;
     };
 
     class Histogram: public Graph {
     public:
-        Histogram(const string filename, const string col_name,
-            const size_t bins = 20);
+        Histogram(const string filename, const string col_name, const string title="",
+            const string x_lab = "", const string y_lab = "", const size_t bins = 20);
         SVG::Group make_bars();
 
     protected:
@@ -190,13 +200,21 @@ namespace Graphs {
         vector<long double> bins;
     };
 
-    class Scatterplot {
+    class Scatterplot: public Graph {
     public:
-        Scatterplot(string filename, string col1, string col2);
+        Scatterplot(const string filename, const string col1, const string col2,
+            const string title);
         SVG::Group make_dots();
 
     protected:
         SVG::Group dots;
+        std::deque<vector<long double>> points;
         string col_name;
+    };
+
+    class ColumnNotFoundError : public std::runtime_error {
+    public:
+        ColumnNotFoundError(const std::string& col_name) : std::runtime_error(
+            "Couldn't find a column named " + col_name) {};
     };
 }

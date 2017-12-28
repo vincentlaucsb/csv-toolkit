@@ -14,12 +14,11 @@ namespace SVG {
         if (tag == "text") {
             ret += this->content;
         }
-        else {
+        else if (!this->children.empty()) {
             ret += "\n";
             // Recursively get strings for child elements
-            for (auto it = children.begin(); it != children.end(); ++it) {
+            for (auto it = children.begin(); it != children.end(); ++it)
                 ret += "\t" + (*it)->to_string() + "\n";
-            }
         }
 
         return ret += "</" + tag + ">";

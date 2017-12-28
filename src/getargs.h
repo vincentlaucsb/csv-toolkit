@@ -1,13 +1,25 @@
 using std::deque;
 using std::string;
+using std::unordered_map;
 
 namespace shuffle {
-    // int getargs(int argc, char* argv[], vector<string>& args, vector<string>& flags);
-    int getargs(int argc, char* argv[], deque<string>&args, deque<string>&flags) {
+    int getargs(int argc, char* argv[],
+        deque<string>& args,
+        deque<string>& flags,
+        unordered_map<string, string>& options
+    ) {
         /**
-        * Parse command line arguments
-        * Return 1 if there is a parsing error
-        **/
+         *  Parse command line arguments
+         *  Return 1 if there is a parsing error
+         *
+         *  Syntax:
+         *  - Arguments are parsed in the order they come and are space-delimited
+         *    - Arguments may be quoted and "example 1" is treated as one argument
+         *  - Flags are any arguments prefixed with a hyphen
+         *  - Options are any arguments in the form -option=value, and 
+         *    are a special case of flags
+         *
+         */
 
         bool quote_escape = false;
         std::string this_arg;
@@ -47,6 +59,21 @@ namespace shuffle {
                 }
 
                 args.push_back(this_arg);
+            }
+        }
+
+        // Separate option flags from other flags
+        for (auto it = flags.begin(); it != flags.end();) {
+            size_t sep_pos = it->find("=");
+            if (sep_pos != std::string::npos) {
+                // Add to options map
+                options[it->substr(0, sep_pos)] = it->substr(sep_pos + 1);
+
+                // Pop from args
+                it = flags.erase(it);
+            }
+            else {
+                ++it;
             }
         }
 

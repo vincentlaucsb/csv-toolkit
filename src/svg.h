@@ -171,10 +171,10 @@ namespace Graphs {
         int margin_top = 50;     /*< Also includes space for title */
 
         // Used to map data values to SVG width/height values
-        long double domain_min = 0;
-        long double domain_max = 0;
-        long double range_min = 0; /*< Minimum value of data (y-axis) */
-        long double range_max = 0; /*< Maximum value of data (y-axis) */
+        long double domain_min = NAN;
+        long double domain_max = NAN;
+        long double range_min = NAN; /*< Minimum value of data (y-axis) */
+        long double range_max = NAN; /*< Maximum value of data (y-axis) */
 
         size_t n_ticks = 20;     /*< Also number of bins */
         int bar_spacing = 2;

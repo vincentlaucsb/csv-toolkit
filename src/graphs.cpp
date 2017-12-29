@@ -139,8 +139,8 @@ namespace Graphs {
 
         long double max = stats.get_maxes()[col_pos];
         long double min = stats.get_mins()[col_pos];
-        auto counts = stats.get_counts()[col_pos];
         long double bin_width = (max - min) / bins;
+        auto counts = stats.get_counts()[col_pos];
 
         // Initialize bins
         for (size_t i = 0; i < bins; i++)
@@ -151,6 +151,9 @@ namespace Graphs {
             this->bins[(std::stold(it->first) - min) / bin_width] += it->second;
 
         // Find bin with the highest count & set bin labels
+        range_min = 0;
+        range_max = 0;
+
         for (size_t i = 0; i < n_ticks; i++) {
             if (this->bins[i] > range_max)
                 range_max = this->bins[i];
@@ -230,6 +233,13 @@ namespace Graphs {
         while (reader.read_row(row)) {
             x_value = row[0].get_float();
             y_value = row[1].get_float();
+
+            if (isnan(domain_max)) {
+                domain_max = x_value;
+                domain_min = x_value;
+                range_max = x_value;
+                range_min = x_value;
+            }
 
             if (x_value > domain_max)
                 domain_max = x_value;

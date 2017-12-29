@@ -127,7 +127,7 @@ namespace Graphs {
         this->n_ticks = bins;
         this->col_name = col_name;
 
-        size_t col_pos = get_col_pos(filename, col_name);
+        int col_pos = get_col_pos(filename, col_name);
         if (col_pos == -1)
             throw ColumnNotFoundError(col_name);
 
@@ -215,8 +215,8 @@ namespace Graphs {
         /** Get all necessary information to generate histogram */
         this->col_name = col_name;
         this->title->content = title;
-        size_t col_pos_x = get_col_pos(filename, col_x);
-        size_t col_pos_y = get_col_pos(filename, col_y);
+        int col_pos_x = get_col_pos(filename, col_x);
+        int col_pos_y = get_col_pos(filename, col_y);
 
         if (col_pos_x == -1)
             throw ColumnNotFoundError(col_x);
@@ -271,7 +271,6 @@ namespace Graphs {
     SVG::Group Scatterplot::make_dots() {
         SVG::Group dots;
         dots.set_attr("fill", "#004777");
-        double bar_height;
 
         // Show every dot
         for (auto it = points.begin(); it != points.end(); ++it) {

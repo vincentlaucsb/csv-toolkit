@@ -1,5 +1,6 @@
 /** @shuffle */
 
+#pragma once
 #include "../lib/csv-parser/src/csv_parser.h"
 #include "../lib/sqlite-cpp/src/sqlite_cpp.h"
 #include <stdexcept>

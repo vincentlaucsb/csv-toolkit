@@ -1,3 +1,5 @@
+#pragma once
+#include <math.h> // NAN
 #include <map>
 #include <deque>
 #include <vector>
@@ -16,40 +18,27 @@ namespace SVG {
             std::map < std::string, std::string > _attr) :
             attr(_attr),
             tag(_tag) {};
-
-        std::string to_string();
-
+            
         template<typename T>
-        Element& set_attr(std::string key, T value) {
+        inline Element& set_attr(std::string key, T value) {
             this->attr[key] = std::to_string(value);
             return *this;
         }
-
-        template<>
-        Element& set_attr(std::string key, const char * value) {
-            this->attr[key] = value;
-            return *this;
-        }
-
-        template<>
-        Element& set_attr(std::string key, const std::string value) {
-            this->attr[key] = value;
-            return *this;
-        }
-
+            
         template<typename T, typename... Args>
-        void add_child(T& node, Args&&... args) {
+        inline void add_child(T node, Args... args) {
             add_child(node);
             add_child(args...);
         }
-
+        
         template<typename T>
-        Element* add_child(T& node) {
+        inline Element* add_child(T node) {
             /** Also return a pointer to the element added */
             this->children.push_back(std::make_shared<Element>(node));
             return this->children.back().get();
         }
 
+        std::string to_string();
         std::map < std::string, std::string > attr;
         std::string content;
 
@@ -58,6 +47,18 @@ namespace SVG {
         std::vector<std::shared_ptr<Element>> children;
     };
 
+    template<>
+    inline Element& Element::set_attr(std::string key, const char * value) {
+        this->attr[key] = value;
+        return *this;
+    }
+
+    template<>
+    inline Element& Element::set_attr(std::string key, const std::string value) {
+        this->attr[key] = value;
+        return *this;
+    }
+    
     class SVG : public Element {
     public:
         SVG(std::map < std::string, std::string > _attr=

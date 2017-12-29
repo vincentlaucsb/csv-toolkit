@@ -94,8 +94,6 @@ void print_help() {
     menu("csv [input 1] [input 2] ... [output]",
          "Reformat one or more input files into a "
          "single RFC 4180 compliant CSV file");
-    menu("hist [file] [col]",
-         "Generate a histogram for a column");
     menu("json [input] [output]", "Newline Delimited JSON Output");
     menu("sql [input] [output]", "Transform CSV file into a SQLite3 database");
     menu("query [filename] [query (optional)]",
@@ -104,6 +102,19 @@ void print_help() {
          "and turn into an interactive SQLite client. ");
     menu("join [input 1] [input 2]", "Join two CSV files on their common fields");
 
+    skip;
+    
+    options = long_table(print_rows, { 40, 60 });
+    for (auto it = options.begin(); it != options.end(); ++it)
+        std::cout << *it << std::endl;
+    
+    print("Plotting Options");
+    hrule(100);
+    menu("hist [file] [col]",
+         "Generate a histogram for a column");
+    menu("scatter [file] [x] [y]",
+         "Generate a scatterplot for two columns x and y");
+         
     options = long_table(print_rows, { 40, 60 });
     for (auto it = options.begin(); it != options.end(); ++it)
         std::cout << *it << std::endl;

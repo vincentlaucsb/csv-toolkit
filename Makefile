@@ -1,4 +1,3 @@
-CXX = clang++
 BUILD_DIR = build
 SQLITE_CPP = lib/sqlite-cpp
 SQLITE3 = $(SQLITE_CPP)/lib
@@ -33,5 +32,6 @@ build/csv_reader.o:
 	mv *.o $(BUILD_DIR)
 	
 # Shuffle
+# export OUTPUT_NAME="shuffle"
 shuffle: build/sqlite_cpp.o build/csv_reader.o
 	$(CXX) -o $(OUTPUT_NAME) $(wildcard build/*.o) $(wildcard src/*.cpp) $(CFLAGS) $(TAR_FLAG)

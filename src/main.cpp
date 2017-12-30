@@ -32,8 +32,9 @@ int cli_rearrange(deque<string>, deque<string>);
 int cli_sql(deque<string>);
 int cli_query(deque<string>);
 int cli_join(deque<string>);
-int cli_hist(deque<string>, unordered_map<string, string> options);
+int cli_hist(deque<string>, unordered_map<string, string>);
 int cli_scatter(deque<string>, unordered_map<string, string>);
+int cli_bar(deque<string>, unordered_map<string, string>);
 
 string rep(string in, int n) {
     // Repeat and concatenate a string multiple times
@@ -102,11 +103,11 @@ void print_help() {
          "and turn into an interactive SQLite client. ");
     menu("join [input 1] [input 2]", "Join two CSV files on their common fields");
 
-    skip;
-    
     options = long_table(print_rows, { 40, 60 });
     for (auto it = options.begin(); it != options.end(); ++it)
         std::cout << *it << std::endl;
+
+    skip;
     
     print("Plotting Options");
     hrule(100);
@@ -114,16 +115,12 @@ void print_help() {
          "Generate a histogram for a column");
     menu("scatter [file] [x] [y]",
          "Generate a scatterplot for two columns x and y");
+    menu("bar [file] [x] [y]",
+         "Generate a bar chart for two columns x and y");
          
     options = long_table(print_rows, { 40, 60 });
     for (auto it = options.begin(); it != options.end(); ++it)
         std::cout << *it << std::endl;
-
-    /*
-    print("sample [input] [output] [n]", 1);
-    print("Take a random sample (with replacement) of n rows", 2);
-    print();
-    */
 }
 
 bool file_exists(string filename) {
@@ -196,6 +193,8 @@ int main(int argc, char* argv[]) {
             return cli_hist(str_args, options);
         else if (command == "scatter")
             return cli_scatter(str_args, options);
+        else if (command == "bar")
+            return cli_bar(str_args, options);
 		else
             head(command, 100); // Assume first arg is a filename
 	}
@@ -564,6 +563,18 @@ int cli_scatter(deque<string> str_args,
 
     Graphs::Scatterplot scatter(file, x, y, title);
     scatter.to_svg(file + ".svg");
+
+    return 0;
+}
+
+int cli_bar(deque<string> str_args,
+    unordered_map<string, string> options) {
+    string file = str_args.at(0);
+    string x = str_args.at(1);
+    string y = str_args.at(2);
+
+    Graphs::BarChart bar(file, x, y, options);
+    bar.to_svg(file + ".svg");
 
     return 0;
 }

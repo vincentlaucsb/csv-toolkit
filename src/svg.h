@@ -1,5 +1,6 @@
 #pragma once
 #include <math.h> // NAN
+#include <unordered_map>
 #include <map>
 #include <deque>
 #include <vector>
@@ -128,9 +129,11 @@ namespace Graphs {
      */
     class Graph {
     public:
+        const enum x_lab_align { left, center };
+
         Graph() {};
         void init();
-        SVG::Group make_x_axis();
+        SVG::Group make_x_axis(Graph::x_lab_align align=left);
         SVG::Group make_y_axis();
         void to_svg(const std::string filename);
 
@@ -181,7 +184,7 @@ namespace Graphs {
         int bar_spacing = 2;
         int tick_size = 5;
 
-        vector<long double> x_tick_labels;
+        vector<std::string> x_tick_labels;
 
         SVG::SVG root;
         SVG::Element* title = nullptr; /*< Pointer set by constructor */
@@ -189,16 +192,22 @@ namespace Graphs {
         SVG::Element* ylab = nullptr;
     };
 
-    class Histogram: public Graph {
+    class BarChart : public Graph {
     public:
-        Histogram(const string filename, const string col_name, const string title="",
-            const string x_lab = "", const string y_lab = "", const size_t bins = 20);
+        BarChart() {};
+        BarChart(const string filename, const string col_x, const string col_y,
+            const std::unordered_map<string, string> options);
         SVG::Group make_bars();
 
     protected:
         SVG::Group bars;
-        string col_name;
-        vector<long double> bins;
+        vector<long double> values;
+    };
+
+    class Histogram: public BarChart {
+    public:
+        Histogram(const string filename, const string col_name, const string title="",
+            const string x_lab = "", const string y_lab = "", const size_t bins = 20);
     };
 
     class Scatterplot: public Graph {
@@ -210,7 +219,6 @@ namespace Graphs {
     protected:
         SVG::Group dots;
         std::deque<vector<long double>> points;
-        string col_name;
     };
 
     class ColumnNotFoundError : public std::runtime_error {

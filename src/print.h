@@ -19,6 +19,7 @@ namespace shuffle {
     ///@{
     string indent(string in, size_t spaces=2);
     string rpad_trim(string in, size_t n = 20, size_t trim = 80);
+    string round(const long double in);
     vector<string> round(vector<long double> in);
     ///@}
 

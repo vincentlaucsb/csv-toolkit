@@ -50,11 +50,20 @@ namespace shuffle {
         return new_str;
     }
 
+    string round(const long double in) {
+        /** Round a number to two decimal places */
+        char buffer[100];
+        if (isnan(in)) { return ""; }
+
+        snprintf(buffer, 100, "%.2Lf", in);
+        return std::string(buffer);
+    }
+    
     vector<string> round(vector<long double> in) {
         /**
-            * Take a numeric vector and return a string vector with rounded numbers
-            * Also replace NaNs with empty strings
-            */
+         * Take a numeric vector and return a string vector with rounded numbers
+         * Also replace NaNs with empty strings
+         */
         vector<string> new_vec;
         char buffer[100];
         string rounded;

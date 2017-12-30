@@ -46,7 +46,6 @@ namespace Graphs {
             .set_attr("style", "font-family: sans-serif; font-size: 16px;")
             .set_attr("dominant-baseline", "central")
             .set_attr("text-anchor", "middle");
-        ylab.content = "Blah";
 
         // So we can dynamically change text content later
         this->title = title_wrapper.add_child(title);
@@ -62,10 +61,13 @@ namespace Graphs {
         svg_file.close();
     }
 
-    SVG::Group Graph::make_x_axis() {
-        /** Generate the x-axis (lines, ticks, labels) */
+    SVG::Group Graph::make_x_axis(Graph::x_lab_align align) {
+        /** Generate the x-axis (lines, ticks, labels)
+         *
+         *  @param[out] align Specifies whether labels should be
+         *                    left or center aligned wrt the bars
+         */
         SVG::Group ret, ticks, tick_text;
-        vector<string> x_tick_labels = shuffle::round(this->x_tick_labels);
         int temp_x1 = x1();
 
         ticks.set_attr("stroke-width", 1).set_attr("stroke", "#000000");
@@ -73,16 +75,24 @@ namespace Graphs {
             .set_attr("text-anchor", "left");
 
         // Add tick marks
-        for (size_t i = 0; i <= n_ticks; i++) {
+        size_t n = n_ticks + 1;
+        size_t tick_offset = 0; // Used for alignment
+
+        if (align == center) {
+            n--;
+            tick_offset += x_tick_space()/2;
+        }
+
+        for (size_t i = 0; i < n; i++) {
             ticks.add_child(SVG::Line(
-                temp_x1, temp_x1,               // Position tick at left hand boundary
+                temp_x1 + tick_offset, temp_x1 + tick_offset,
                 y2(), y2() + tick_size));
 
             // Use translate() to set location rather than x, y
             // attributes so rotation works properly
             SVG::Text label(0, 0, x_tick_labels.at(i));
             label.set_attr("transform", "translate(" +
-                std::to_string(temp_x1) + "," +
+                std::to_string(temp_x1 + tick_offset) + "," +
                 std::to_string(y2() + tick_size + 10) // Space label further south from ticks
                 + ") rotate(75)");
             tick_text.add_child(label);
@@ -120,12 +130,91 @@ namespace Graphs {
         return ret;
     }
 
+    BarChart::BarChart(
+        const string filename, const string col_x, const string col_y,
+        const std::unordered_map<string, string> options) { 
+        //const string col_x, const string col_y, const string title) {
+        /** Get all necessary information to generate bar chart */
+        this->init();
+
+        /** Get all necessary information to generate histogram */
+        int col_pos_x = get_col_pos(filename, col_x);
+        int col_pos_y = get_col_pos(filename, col_y);
+
+        if (col_pos_x == -1)
+            throw ColumnNotFoundError(col_x);
+
+        if (col_pos_y == -1)
+            throw ColumnNotFoundError(col_y);
+
+        // Get x and y values for bar charts
+        CSVReader reader(filename, GUESS_CSV, { (int)col_pos_x, (int)col_pos_y });
+        vector<CSVField> row;
+        string x_value;
+        double y_value;
+
+        while (reader.read_row(row) && x_tick_labels.size() < 20) {
+            x_tick_labels.push_back(row[0].get_string());
+            values.push_back(row[1].get_float());
+        }
+
+        this->n_ticks = x_tick_labels.size();
+
+        // Find bin with the highest count & set bin labels
+        range_min = 0;
+        range_max = 0;
+
+        for (size_t i = 0; i < n_ticks; i++) {
+            if (this->values[i] > range_max)
+                range_max = this->values[i];
+            else if (this->values[i] < range_min)
+                range_min = this->values[i];
+        }
+
+        /** Set up the graph */
+        if (options.find("title") == options.end())
+            this->title->content = "Chart for " + col_x + " vs. " + col_y;
+        else
+            this->title->content = options.find("title")->second;
+
+        if (options.find("xlab") == options.end())
+            this->xlab->content = col_x;
+        else
+            this->xlab->content = options.find("xlab")->second;
+
+        if (options.find("ylab") == options.end())
+            this->ylab->content = col_y;
+        else
+            this->ylab->content = options.find("ylab")->second;
+
+        this->root.add_child(make_bars(), make_x_axis(center), make_y_axis());
+    }
+
+    SVG::Group BarChart::make_bars() {
+        /** Distribute bars evenly across graph canvas */
+        SVG::Group bars;
+        bars.set_attr("fill", "#004777");
+
+        const int max_height = y2() - y1();
+        int temp_x1 = x1();
+        double bar_height;
+
+        // Add a bar for every bin
+        for (auto it = values.begin(); it != values.end(); ++it) {
+            bar_height = (*it / range_max) * max_height;
+            bars.add_child(SVG::Rect(temp_x1, y2() - bar_height,
+                x_tick_space() - bar_spacing, bar_height));
+            temp_x1 += x_tick_space();
+        }
+
+        return bars;
+    }
+
     Histogram::Histogram(
         const string filename, const string col_name, const string title,
         const string x_lab, const string y_lab, const size_t bins) {
         /** Get all necessary information to generate histogram */
         this->n_ticks = bins;
-        this->col_name = col_name;
 
         int col_pos = get_col_pos(filename, col_name);
         if (col_pos == -1)
@@ -144,28 +233,28 @@ namespace Graphs {
 
         // Initialize bins
         for (size_t i = 0; i < bins; i++)
-            this->bins.push_back(0);
+            this->values.push_back(0);
 
         // Aggregate each bin
         for (auto it = counts.begin(); it != counts.end(); ++it)
-            this->bins[(std::stold(it->first) - min) / bin_width] += it->second;
+            this->values[(std::stold(it->first) - min) / bin_width] += it->second;
 
         // Find bin with the highest count & set bin labels
         range_min = 0;
         range_max = 0;
 
         for (size_t i = 0; i < n_ticks; i++) {
-            if (this->bins[i] > range_max)
-                range_max = this->bins[i];
-            else if (this->bins[i] < range_min)
-                range_min = this->bins[i];
+            if (this->values[i] > range_max)
+                range_max = this->values[i];
+            else if (this->values[i] < range_min)
+                range_min = this->values[i];
 
             // Left-hand boundary values
-            x_tick_labels.push_back(min + i*bin_width);
+            x_tick_labels.push_back(shuffle::round(min + i*bin_width));
         }
 
         // Add a label for the last tick mark
-        x_tick_labels.push_back(min + n_ticks*bin_width);
+        x_tick_labels.push_back(shuffle::round(min + n_ticks*bin_width));
 
         /** Set up the graph */
         if (title.empty())
@@ -186,41 +275,17 @@ namespace Graphs {
         this->root.add_child(make_bars(), make_x_axis(), make_y_axis());
     }
 
-    SVG::Group Histogram::make_bars() {
-        /** Distribute bars evenly across graph canvas */
-
-        SVG::Group bars;
-        bars.set_attr("fill", "#004777");
-
-        const int max_height = y2() - y1();
-        int temp_x1 = x1();
-        double bar_height;
-
-        // Add a bar for every bin
-        for (auto it = bins.begin(); it != bins.end(); ++it) {
-            bar_height = (*it / range_max) * max_height;
-            bars.add_child(SVG::Rect(temp_x1, y2() - bar_height,
-                x_tick_space() - bar_spacing, bar_height));
-            temp_x1 += x_tick_space();
-        }
-
-        return bars;
-    }
-
     Scatterplot::Scatterplot(
         const string filename, const string col_x, const string col_y,
         const string title) {
         this->init();
 
         /** Get all necessary information to generate histogram */
-        this->col_name = col_name;
-        this->title->content = title;
         int col_pos_x = get_col_pos(filename, col_x);
         int col_pos_y = get_col_pos(filename, col_y);
 
         if (col_pos_x == -1)
             throw ColumnNotFoundError(col_x);
-
         if (col_pos_y == -1)
             throw ColumnNotFoundError(col_y);
 
@@ -254,9 +319,12 @@ namespace Graphs {
             points.push_back({ x_value, y_value });
         }
 
+        this->n_ticks = std::min(points.size(), (size_t)20);
+
         // Set bin labels to left-hand boundary values
         for (size_t i = 0; i <= n_ticks; i++)
-            this->x_tick_labels.push_back(domain_min + i*(domain_max - domain_min)/n_ticks);
+            this->x_tick_labels.push_back(shuffle::round(
+                domain_min + i*(domain_max - domain_min)/n_ticks));
 
         if (title.empty())
             this->title->content = "Scatterplot for " + col_x + " vs. " + col_y;

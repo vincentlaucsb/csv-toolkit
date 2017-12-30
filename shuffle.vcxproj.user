@@ -8,7 +8,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LocalDebuggerCommandArguments>scatter C:\Users\vince\Documents\GitHub\shuffle\x64\Release\ints_cubed.csv "A" "C" -title=blah</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>scatter C:/Users/vince/Documents/GitHub/shuffle/examples/aaron.csv Year Yds -title="Aaron Rodger's Passing Yards"</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

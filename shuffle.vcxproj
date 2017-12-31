@@ -144,7 +144,6 @@
     <ClCompile Include="lib\sqlite-cpp\src\sqlite_cpp.cpp" />
     <ClCompile Include="src\csv_search.cpp" />
     <ClCompile Include="src\csv_sql.cpp" />
-    <ClCompile Include="src\graphs.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\print.cpp" />
     <ClCompile Include="src\svg.cpp" />

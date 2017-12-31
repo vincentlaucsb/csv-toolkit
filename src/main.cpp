@@ -32,7 +32,7 @@ int cli_rearrange(deque<string>, deque<string>);
 int cli_sql(deque<string>);
 int cli_query(deque<string>);
 int cli_join(deque<string>);
-int cli_hist(deque<string>, unordered_map<string, string>);
+int cli_hist(deque<string>, deque<string>, unordered_map<string, string>);
 int cli_scatter(deque<string>, unordered_map<string, string>);
 int cli_bar(deque<string>, unordered_map<string, string>);
 
@@ -190,7 +190,7 @@ int main(int argc, char* argv[]) {
         else if (command == "join")
             return cli_join(str_args);
         else if (command == "hist")
-            return cli_hist(str_args, options);
+            return cli_hist(str_args, flags, options);
         else if (command == "scatter")
             return cli_scatter(str_args, options);
         else if (command == "bar")
@@ -537,7 +537,8 @@ int cli_join(deque<string> str_args) {
     return 0;
 }
 
-int cli_hist(deque<string> str_args, unordered_map<string, string> options) {
+int cli_hist(deque<string> str_args, deque<string> flags,
+    unordered_map<string, string> options) {
     string file = str_args.at(0);
     string col = str_args.at(1);
     string title = options["title"];
@@ -548,8 +549,14 @@ int cli_hist(deque<string> str_args, unordered_map<string, string> options) {
     if (options.find("bin") != options.end())
         bins = (size_t)std::stoi(options["bin"]);
 
-    Graphs::Histogram hist(file, col, title, xlab, ylab, bins);
-    hist.to_svg(file + ".svg");
+    if (std::find(flags.begin(), flags.end(), "all") == flags.end()) {
+        Graphs::Histogram hist(file, col, title, xlab, ylab, bins);
+        hist.generate();
+        hist.to_svg(file + ".svg");
+    }
+    else { // Generate histogram matrix
+        Graphs::matrix_hist(file, col);
+    }
 
     return 0;
 }
@@ -562,6 +569,7 @@ int cli_scatter(deque<string> str_args,
     string title = options["title"];
 
     Graphs::Scatterplot scatter(file, x, y, title);
+    scatter.generate();
     scatter.to_svg(file + ".svg");
 
     return 0;
@@ -574,6 +582,7 @@ int cli_bar(deque<string> str_args,
     string y = str_args.at(2);
 
     Graphs::BarChart bar(file, x, y, options);
+    bar.generate();
     bar.to_svg(file + ".svg");
 
     return 0;

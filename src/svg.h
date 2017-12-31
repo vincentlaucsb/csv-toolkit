@@ -117,6 +117,15 @@ namespace SVG {
 }
 
 namespace Graphs {
+    vector<bool> numeric_types(std::string filename, int nrows);
+
+    struct GraphOptions {
+        int width = 800;
+        int height = 460;
+    };
+
+    const GraphOptions DEFAULT_GRAPH = GraphOptions();
+
     /** This provides a base class for any graph and provides common methods for
      *  drawing the x and y axes as well as positioning the main drawing area    
      *
@@ -130,14 +139,18 @@ namespace Graphs {
     class Graph {
     public:
         const enum x_lab_align { left, center };
-
-        Graph() {};
-        void init();
-        SVG::Group make_x_axis(Graph::x_lab_align align=left);
-        SVG::Group make_y_axis();
+        Graph(GraphOptions options=DEFAULT_GRAPH);
+        virtual void generate() {};
         void to_svg(const std::string filename);
 
+        SVG::SVG root;
+        int width;
+        int height;
+
     protected:
+        SVG::Group make_x_axis(Graph::x_lab_align align = left);
+        SVG::Group make_y_axis();
+
         inline int x1() {
             /** Return boundary of drawing area */
             return margin_left;
@@ -167,8 +180,6 @@ namespace Graphs {
             return (x2() - x1()) / n_ticks;
         }
 
-        int width = 800;
-        int height = 460;
         int margin_left = 50;    /*< Also includes space for y-axis labels */
         int margin_right = 50;
         int margin_bottom = 100; /*< Also includes space for x-axis labels */
@@ -186,7 +197,6 @@ namespace Graphs {
 
         vector<std::string> x_tick_labels;
 
-        SVG::SVG root;
         SVG::Element* title = nullptr; /*< Pointer set by constructor */
         SVG::Element* xlab = nullptr;
         SVG::Element* ylab = nullptr;
@@ -194,12 +204,15 @@ namespace Graphs {
 
     class BarChart : public Graph {
     public:
-        BarChart() {};
+        BarChart(GraphOptions options = DEFAULT_GRAPH) : Graph(options) {};
         BarChart(const string filename, const string col_x, const string col_y,
-            const std::unordered_map<string, string> options);
-        SVG::Group make_bars();
+            const std::unordered_map<string, string> options,
+            const GraphOptions options2 = DEFAULT_GRAPH);
+        void generate() override;
 
     protected:
+        SVG::Group make_bars();
+
         SVG::Group bars;
         vector<long double> values;
     };
@@ -207,19 +220,43 @@ namespace Graphs {
     class Histogram: public BarChart {
     public:
         Histogram(const string filename, const string col_name, const string title="",
-            const string x_lab = "", const string y_lab = "", const size_t bins = 20);
+            const string x_lab = "", const string y_lab = "", const size_t bins = 20,
+            const GraphOptions options = DEFAULT_GRAPH);
+        void generate() override;
     };
 
     class Scatterplot: public Graph {
     public:
         Scatterplot(const string filename, const string col1, const string col2,
-            const string title);
-        SVG::Group make_dots();
+            const string title, const GraphOptions options=DEFAULT_GRAPH);
+        void generate() override;
 
     protected:
+        SVG::Group make_dots();
+
         SVG::Group dots;
         std::deque<vector<long double>> points;
     };
+
+    /**
+     * Class for multi-graph SVGs
+     */
+    class Matrix {
+    public:
+        Matrix(int _cols) : cols(_cols) {};
+        void add_graph(Graph graph);
+        void generate();
+        void to_svg(const string filename);
+
+    private:
+        SVG::SVG root;
+        std::deque<Graph> graphs;
+        int cols;
+        int width_per_graph = 500;
+        int height_per_graph = 400;
+    };
+
+    void matrix_hist(const std::string filename, const std::string outfile);
 
     class ColumnNotFoundError : public std::runtime_error {
     public:

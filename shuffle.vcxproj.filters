@@ -48,9 +48,6 @@
     <ClCompile Include="src\svg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\graphs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\csv-parser\tests\catch.hpp">

@@ -1,5 +1,5 @@
 #include "shuffle.h"
-#include "print.h"
+#include "str.h"
 #include "svg.h"
 
 using namespace csv;
@@ -39,7 +39,7 @@ namespace Graphs {
         * @param[in] filename Path to CSV file
         * @param[in] nrows    Number of rows to examine
         */
-        CSVStat stat(guess_delim(filename));
+        CSVStat stat(guess_format(filename).delim);
         stat.read_csv(filename, nrows, true);
         stat.calc(false, false, true);
 

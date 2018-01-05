@@ -1,3 +1,7 @@
+/**
+ * String formatting functions
+ */
+
 #include <iostream>
 #include <deque>
 #include <vector>
@@ -6,6 +10,7 @@
 #include <unordered_map>
 #include <math.h>
 
+using std::deque;
 using std::vector;
 using std::string;
 using std::unordered_map;
@@ -14,9 +19,52 @@ using std::list;
 namespace shuffle {
     /** @file */
 
+    struct PrettyPrinterParams {
+        int row_num = -1;
+        std::vector<std::string> col_names = {};
+        std::vector<std::string> row_names = {};
+        size_t padding = 4;
+        char col_name_border = '=';
+    };
+    const PrettyPrinterParams DEFAULT_PRETTY_PRINT;
+
+    class PrettyPrinter {
+    public:
+        PrettyPrinter(PrettyPrinterParams params=DEFAULT_PRETTY_PRINT);
+        inline PrettyPrinter(std::deque<std::vector<std::string>>& in) {
+            feed(in);
+        };
+
+        static std::vector<size_t> calc_widths(std::deque<std::vector<std::string>>&,
+            const size_t max_col_width, const size_t padding=4);
+
+        bool format();
+        bool print_rows();
+
+        PrettyPrinter& feed(const std::vector<std::string>);
+        PrettyPrinter& feed(std::deque<std::vector<std::string>>&);
+        PrettyPrinter& operator<<(const std::vector<std::string>);
+    private:
+        void move(std::deque<std::vector<std::string>>&, size_t);
+        void handle_row_names(const size_t, const size_t);
+
+        std::deque<std::vector<std::string>> unformatted;
+        std::vector<std::string> formatted; /** Each string represents one row */
+        std::vector<std::string> col_names;
+        std::vector<std::string> row_names;
+
+        char col_name_border;
+        size_t row_name_width = 0;
+        bool print_row_num = false;
+        size_t begin_row_num = 0;
+        size_t row_num = 0;
+        size_t padding = 0; /** Space between columns */
+    };
+
     /** @name String Formatting Functions
     */
     ///@{
+    string rep(string in, const size_t n);
     string indent(string in, size_t spaces=2);
     string rpad_trim(string in, size_t n = 20, size_t trim = 80);
     string round(const long double in);
@@ -24,14 +72,12 @@ namespace shuffle {
     ///@}
 
     /** @name Pretty Printing Functions
-        */
-        ///@{
-    vector<size_t> _get_col_widths(std::deque<vector<string>>&, size_t);
+     */
+    ///@{
+    size_t digits(const size_t num);
+    void puts(std::string in);
     void print_record(std::vector<std::string> record);
     vector<string> long_table(std::deque<vector<string>>&, const vector<size_t>);
-    vector<string> break_table(std::deque<vector<string>>&,
-        int row_num = 0, vector<string> row_names = {},
-        bool header=false);
     ///@}
 
     template<typename T>

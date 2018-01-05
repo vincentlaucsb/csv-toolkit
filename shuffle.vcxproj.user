@@ -8,7 +8,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LocalDebuggerCommandArguments>hist C:/Users/vince/Documents/GitHub/shuffle/x64/Release/DEC_10_DP_DPDP1_with_ann.csv HD01_S001</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>stat C:\Users\vince\Documents\GitHub\shuffle\x64\Release\2015_StateDepartment.csv</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

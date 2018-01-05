@@ -1,5 +1,5 @@
 #include "shuffle.h"
-#include "print.h"
+#include "str.h"
 #include <regex>
 
 using namespace csv;
@@ -12,35 +12,19 @@ namespace shuffle {
     void head(std::string infile, int nrow, std::vector<int> subset) {
         /** Print out the first n rows of a CSV */
         CSVReader reader(infile);
+
+        PrettyPrinterParams params;
+        params.row_num = 0;
+        params.col_names = reader.get_col_names();
+
+        PrettyPrinter printer(params);
         vector<string> row;
-        std::deque<vector<string>> records = {};
-        std::vector<string> print_rows;
-        int i = 0;
+        bool keep_printing = true;
 
-        while (reader.read_row(row)) {
-            records.push_back(row);
-            i++;
-
-            if (i%nrow == 0) {
-                while (!records.empty()) {
-                    records.push_front(reader.get_col_names());
-                    print_rows = break_table(records, i - records.size(), {}, true);
-                    for (auto it = print_rows.begin(); it != print_rows.end(); ++it)
-                        std::cout << *it << std::endl;
-                    std::cout << std::endl
-                        << "Press Enter to continue"
-                        << std::endl << std::endl;
-                    std::cin.get();
-                }
-
-                std::cout << std::endl
-                    << "Press Enter to continue printing, or q or Ctrl + C to quit."
-                    << std::endl << std::endl;
-                if (std::cin.get() == 'q') {
-                    reader.close();
-                    break;
-                }
-            }
+        for (int i = 0; reader.read_row(row) && keep_printing; i++) {
+            printer << row;
+            if (i%nrow == 0)
+                keep_printing = printer.print_rows();
         }
     }
 

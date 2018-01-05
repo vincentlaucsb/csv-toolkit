@@ -2,15 +2,16 @@
 /* Command Line Interface for CSV Parser */
 
 #define print(a) std::cout << a << std::endl
-#define hrule(a) std::cout << (rep("-", a)) << std::endl;
+#define print_vec(a) std::for_each(a.begin(), a.end(), shuffle::puts)
+#define hrule(a) std::cout << (rep("-", a)) << std::endl
 #define skip std::cout << std::endl
-#define menu(a, b) print_rows.push_back({ a, b })
 
 #include "shuffle.h"
 #include "svg.h"
-#include "print.h"
+#include "str.h"
 #include "getargs.h"
 #include "string.h"
+#include <cstdio>
 #include <assert.h>
 #include <regex>
 #include <set>
@@ -36,17 +37,6 @@ int cli_hist(deque<string>, deque<string>, unordered_map<string, string>);
 int cli_scatter(deque<string>, unordered_map<string, string>);
 int cli_bar(deque<string>, unordered_map<string, string>);
 
-string rep(string in, int n) {
-    // Repeat and concatenate a string multiple times
-    string new_str;
-
-    for (int i = 0; i + 1 < n; i++) {
-        new_str += in;
-    }
-
-    return new_str;
-}
-
 string join(deque<string> in, int a, int b, string delim=" ") {
 	string ret_str;
 
@@ -62,6 +52,8 @@ string join(deque<string> in, int a, int b, string delim=" ") {
 }
 
 void print_help() {
+    #define menu(a, b) print_rows.push_back({ a, b })
+
     // Thanks to http://www.patorjk.com/software/taag/
     std::cout << R"(        __                 ___    ___  __         )" << std::endl
               << R"(       [  |              .' ..] .' ..][  |        )" << std::endl
@@ -73,17 +65,14 @@ void print_help() {
     skip; skip;
 
     deque<vector<string>> print_rows;
+    vector<string> options;
 
     print("Basic Usage");
     hrule(100);
     menu("shuffle [file]", "Pretty print a file to the terminal");
     menu("shuffle [option] [args]", "See menu below");
-
-    vector<string> options = long_table(print_rows, { 40, 60 });
-    for (auto it = options.begin(); it != options.end(); ++it)
-        std::cout << *it << std::endl;
-    print_rows.clear();
-
+    options = long_table(print_rows, { 40, 60 });
+    print_vec(options);
     skip;
 
     print("Options");
@@ -102,11 +91,8 @@ void print_help() {
          "then this program will display the database schema "
          "and turn into an interactive SQLite client. ");
     menu("join [input 1] [input 2]", "Join two CSV files on their common fields");
-
     options = long_table(print_rows, { 40, 60 });
-    for (auto it = options.begin(); it != options.end(); ++it)
-        std::cout << *it << std::endl;
-
+    print_vec(options);
     skip;
     
     print("Plotting Options");
@@ -119,8 +105,7 @@ void print_help() {
          "Generate a bar chart for two columns x and y");
          
     options = long_table(print_rows, { 40, 60 });
-    for (auto it = options.begin(); it != options.end(); ++it)
-        std::cout << *it << std::endl;
+    print_vec(options);
 }
 
 bool file_exists(string filename) {
@@ -214,19 +199,7 @@ int cli_stat(deque<string> str_args) {
     file_exists(str_args.at(0));
    
     CSVStat calc;
-    (&calc)->bad_row_handler = &print_record;
-    calc.calc_csv(filename);
-
-    vector<string> col_names = calc.get_col_names();
-    vector<unordered_map<string, int>> counts = calc.get_counts();
-    deque<vector<string>> print_rows = {
-        col_names,
-        round(calc.get_mean()),
-        round(calc.get_variance()),
-        round(calc.get_mins()),
-        round(calc.get_maxes())
-    };
-    vector<string> row_names = { "", "Mean", "Variance", "Min", "Max" };
+    calc.calc_csv(filename, true, false, false);
 
     // Introduction
     std::cout << filename << " - " << "Full Statistics Report" << std::endl;
@@ -235,69 +208,34 @@ int cli_stat(deque<string> str_args) {
     // Print basic stats
     print("Summary Statistics");
     hrule(120); skip;
-    break_table(print_rows, -1, row_names);
-    skip;
 
-    /**
-     * Print counts
-     *
-     * Formatting:
-     *  - Stack counts horizontally
-     *  - Let print_table() do the line breaking
-     */
+    PrettyPrinterParams print_params;
+    auto col_names = print_params.col_names = calc.get_col_names();
+    print_params.row_names = { "Mean", "Variance", "Min", "Max" };
+    print_params.col_name_border = '-';
 
-    // Reserve space for 10 rows + 1 header
-    for (int i = 0; i < 11; i++)
-        print_rows.push_back({});
+    PrettyPrinter printer(print_params);
+    printer << round(calc.get_mean()) << round(calc.get_variance()) << round(calc.get_mins())
+        << round(calc.get_maxes());
+    printer.print_rows();
 
-    // Loop over columns
-    print("Frequency Counts - Top 10 Most Common Values");
-    hrule(120); skip;
-
-    auto current_row = print_rows.begin();
-
-    for (size_t i = 0; i < col_names.size(); i++) {
-        current_row = print_rows.begin();
-
-        // Add header
-        current_row->push_back(col_names[i]);
-
-        // Add counts
-        unordered_map<string, int> temp = top_n_values(counts[i], 10);
-
-        size_t j = 0;
-        for (auto it = temp.begin(); it != temp.end(); ++it) {
-            current_row++;
-            current_row->push_back(it->first + ":   " + std::to_string(it->second));
-            j++;
-        }
-
-        // If there are less than 10 items in this column, add filler
-        for (; j < 10; j++) {
-            current_row++;
-            current_row->push_back("");
-        }
-    }
-
-    //print_table(print_rows, -1);
     return 0;
 }
 
 int cli_info(string filename) {
     CSVFileInfo info = get_file_info(filename);
-    deque<vector<string>> records;
-    std::string delim = "";
-    delim += info.delim;
-
+    std::string delim = std::string(1, info.delim);
     print(info.filename);
-    records.push_back({"Delimiter", delim});
-    records.push_back({"Rows", std::to_string(info.n_rows) });
-    records.push_back({"Columns", std::to_string(info.n_cols) });
+
+    PrettyPrinter printer;
+    printer.feed({"Delimiter", delim})
+        .feed({"Rows", std::to_string(info.n_rows) })
+        .feed({"Columns", std::to_string(info.n_cols) });
 
     for (size_t i = 0; i < info.col_names.size(); i++)
-        records.push_back({"[" + std::to_string(i) + "]", info.col_names[i]});
+        printer.feed({"[" + std::to_string(i) + "]", info.col_names[i]});
 
-    //print_table(records, -1);
+    printer.print_rows();
     return 0;
 }
 

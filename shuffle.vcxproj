@@ -145,7 +145,7 @@
     <ClCompile Include="src\csv_search.cpp" />
     <ClCompile Include="src\csv_sql.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\print.cpp" />
+    <ClCompile Include="src\str.cpp" />
     <ClCompile Include="src\svg.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,7 +155,7 @@
     <ClInclude Include="lib\sqlite-cpp\lib\sqlite3ext.h" />
     <ClInclude Include="lib\sqlite-cpp\src\sqlite_cpp.h" />
     <ClInclude Include="src\getargs.h" />
-    <ClInclude Include="src\print.h" />
+    <ClInclude Include="src\str.h" />
     <ClInclude Include="src\shuffle.h" />
     <ClInclude Include="src\svg.h" />
   </ItemGroup>

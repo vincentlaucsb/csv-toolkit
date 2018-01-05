@@ -1,5 +1,4 @@
 #include "shuffle.h"
-#include "print.h"
 #include <stdio.h>
 #include <set>
 
@@ -90,7 +89,9 @@ namespace shuffle {
             * @param[in] filename Path to CSV file
             * @param[in] nrows    Number of rows to examine
             */
-            CSVStat stat(guess_delim(filename));
+
+            // TODO: Rewrite this
+            CSVStat stat(guess_format(filename).delim);
             stat.read_csv(filename, nrows, true);
             stat.calc(false, false, true);
 

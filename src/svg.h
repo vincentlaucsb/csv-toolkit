@@ -35,11 +35,25 @@ namespace SVG {
         template<typename T>
         inline Element* add_child(T node) {
             /** Also return a pointer to the element added */
-            this->children.push_back(std::make_shared<Element>(node));
+            this->children.push_back(std::make_shared<T>(node));
             return this->children.back().get();
         }
 
-        std::string to_string();
+        inline virtual float get_width() {
+            if (attr.find("width") != attr.end())
+                return std::stof(attr["width"]);
+            else
+                return NAN;
+        }
+        
+        inline virtual float get_height() {
+            if (attr.find("height") != attr.end())
+                return std::stof(attr["height"]);
+            else
+                return NAN;
+        }
+
+        virtual std::string to_string();
         std::map < std::string, std::string > attr;
         std::string content;
 
@@ -59,12 +73,50 @@ namespace SVG {
         this->attr[key] = value;
         return *this;
     }
-    
+
     class SVG : public Element {
     public:
         SVG(std::map < std::string, std::string > _attr=
         { { "xmlns", "http://www.w3.org/2000/svg" } }
         ) : Element("svg", _attr) {};
+    };
+
+    class Path : public Element {
+    public:
+        Path() : Element("path", {}) {};
+
+        template<typename T>
+        inline void start(T x, T y) {
+            /** Start line at (x, y)
+             *  This function overwrites the current path if it exists
+             */
+            this->attr["d"] = "M " + std::to_string(x) + " " + std::to_string(y);
+            this->x_start = x;
+            this->y_start = y;
+        }
+
+        template<typename T>
+        inline void line_to(T x, T y) {
+            /** Draw a line to (x, y) 
+             *  If line has not been initialized by setting a starting point, 
+             *  then start() will be called with (x, y) as arguments
+             */
+
+            if (this->attr["d"].front() != 'M')
+                start(x, y);
+            else
+                this->attr["d"] += " L " + std::to_string(x) + 
+                    " " + std::to_string(y);
+        }
+
+        inline void to_origin() {
+            /** Draw a line back to the origin */
+            this->line_to(x_start, y_start);
+        }
+
+    private:
+        float x_start;
+        float y_start;
     };
 
     class Text : public Element {
@@ -76,6 +128,8 @@ namespace SVG {
             set_attr("y", std::to_string(y));
             content = _content;
         }
+
+        std::string to_string() override;
     };
 
     class Group : public Element {
@@ -85,12 +139,25 @@ namespace SVG {
 
     class Line : public Element {
     public:
+        Line() {};
         Line(int x1, int x2, int y1, int y2) : Element("line", {
             { "x1", std::to_string(x1) },
             { "x2", std::to_string(x2) },
             { "y1", std::to_string(y1) },
             { "y2", std::to_string(y2) }
         }) {};
+
+        inline float x1() { return std::stof(this->attr["x1"]); }
+        inline float x2() { return std::stof(this->attr["x2"]); }
+        inline float y1() { return std::stof(this->attr["y1"]); }
+        inline float y2() { return std::stof(this->attr["y2"]); }
+
+        inline float get_width() override;
+        inline float get_height() override;
+        inline float get_length();
+        inline float get_slope();
+
+        std::pair<float, float> along(float percent);
     };
 
     class Rect : public Element {
@@ -120,11 +187,11 @@ namespace Graphs {
     vector<bool> numeric_types(std::string filename, int nrows);
 
     struct GraphOptions {
-        int width = 800;
-        int height = 460;
+        int width;
+        int height;
     };
 
-    const GraphOptions DEFAULT_GRAPH = GraphOptions();
+    const GraphOptions DEFAULT_GRAPH = { 800, 400 };
 
     /** This provides a base class for any graph and provides common methods for
      *  drawing the x and y axes as well as positioning the main drawing area    
@@ -138,7 +205,7 @@ namespace Graphs {
      */
     class Graph {
     public:
-        const enum x_lab_align { left, center };
+        enum x_lab_align { left, center };
         Graph(GraphOptions options=DEFAULT_GRAPH);
         virtual void generate() {};
         void to_svg(const std::string filename);
@@ -257,6 +324,33 @@ namespace Graphs {
     };
 
     void matrix_hist(const std::string filename, const std::string outfile);
+
+    class PolarCoordinates {
+    public:
+        PolarCoordinates(float cx, float cy, float cr) : 
+            x(cx), y(cy), radius(cr) {};
+        std::pair<float, float> map(float degrees, float percent=1);
+        std::pair<float, float> center();
+    private:
+        float x;
+        float y;
+        float radius;
+    };
+
+    class RadarChart {
+    public:
+        RadarChart(size_t axes);
+        void plot_points(vector<float> percentages);
+        void to_svg(const string filename);
+    private:
+        void make_axis(size_t axes);
+
+        PolarCoordinates polar = { 250, 250, 250 };
+        SVG::SVG root;
+        std::vector<SVG::Line*> axes;
+
+        size_t n_axes;
+    };
 
     class ColumnNotFoundError : public std::runtime_error {
     public:

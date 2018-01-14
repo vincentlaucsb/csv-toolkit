@@ -1,3 +1,4 @@
+#define PI 3.14159265
 #include "shuffle.h"
 #include "str.h"
 #include "svg.h"
@@ -8,27 +9,85 @@ using std::vector;
 using std::string;
 
 namespace SVG {
+    float Line::get_slope() {
+        return (y2() - y1()) / (x2() - x1());
+    }
+
+    float Line::get_length() {
+        return std::sqrt(pow(get_width(), 2) + pow(get_height(), 2));
+    }
+
+    float Line::get_width() {
+        return std::abs(x2() - x1());
+    }
+
+    float Line::get_height() {
+        return std::abs(y2() - y1());
+    }
+
+    std::pair<float, float> Line::along(float percent) {
+        /** Return the coordinates required to place an element along
+         *   this line
+         */
+
+        float x_pos, y_pos;
+
+        if (x1() != x2()) {
+            float length = percent * this->get_length();
+            float discrim = std::sqrt(4 * pow(length, 2) * (1 / (1 + pow(get_slope(), 2))));
+
+            float x_a = (2 * x1() + discrim) / 2;
+            float x_b = (2 * x1() - discrim) / 2;
+            x_pos = x_a;
+
+            if ((x_a > x1() && x_a > x2()) || (x_a < x1() && x_a < x2()))
+                x_pos = x_b;
+
+            y_pos = get_slope() * (x_pos - x1()) + y1();
+
+            std::cout << x_a << " " << x_b << std::endl;
+
+            std::cout << "Length: " << length << " Discrim: " << discrim <<
+                " x: " << x_pos << " y: " << y_pos << " Slope: " << get_slope() << std::endl;
+        }
+        else { // Edge case:: Completely vertical lines
+            x_pos = x1();
+
+            if (y1() > y2()) // Downward pointing
+                y_pos = y1() - percent * this->get_length();
+            else
+                y_pos = y1() + percent * this->get_length();
+        }
+
+        return std::make_pair(x_pos, y_pos);
+    }
+
+# define to_string_attrib for (auto it = attr.begin(); it != attr.end(); ++it) \
+    ret += " " + it->first + "=" + "\"" + it->second += "\""
+
     std::string Element::to_string() {
         std::string ret = "<" + tag;
 
         // Set attributes
-        for (auto it = attr.begin(); it != attr.end(); ++it)
-            ret += " " + it->first + "=" + "\"" + it->second += "\"";
-        ret += ">";
+        to_string_attrib;
+        
+        if (!this->children.empty()) {
+            ret += ">\n";
 
-        // Necessary because I can't get virtual methods to work with
-        // recursive function calls
-        if (tag == "text") {
-            ret += this->content;
-        }
-        else if (!this->children.empty()) {
-            ret += "\n";
             // Recursively get strings for child elements
             for (auto it = children.begin(); it != children.end(); ++it)
                 ret += "\t" + (*it)->to_string() + "\n";
+
+            return ret += "</" + tag + ">";
         }
 
-        return ret += "</" + tag + ">";
+        return ret += " />";
+    }
+
+    std::string Text::to_string() {
+        std::string ret = "<text";
+        to_string_attrib;
+        return ret += ">" + this->content + "</text>";
     }
 }
 
@@ -485,5 +544,96 @@ namespace Graphs {
 
         hist_matrix.generate();
         hist_matrix.to_svg(outfile);
+    }
+
+    RadarChart::RadarChart(size_t axes) : n_axes(axes) {
+        SVG::Line line;
+        std::pair<double, double> coord;
+        root.set_attr("width", 500);
+        root.set_attr("height", 500);
+
+        // Draw up axes
+        for (double i = 0; i < axes; i++) {
+            coord = polar.map((i / axes) * 2 * PI);
+            line = SVG::Line((int)polar.center().first, coord.first,
+                (int)polar.center().second, coord.second);
+            line.set_attr("stroke-width", 2).set_attr("stroke", "black");
+
+            root.add_child(SVG::Circle(std::get<0>(coord), std::get<1>(coord), 2));
+            this->axes.push_back((SVG::Line*)root.add_child(line));
+        }
+
+        // Temporary test: add fake data points
+        vector<float> pcts1, pcts2, pcts3;
+        for (float i = 0; i < axes; i++) {
+            pcts1.push_back((i / axes));
+            pcts2.push_back(0.5);
+            pcts3.push_back(1);
+        }
+
+        this->plot_points(pcts1);
+        this->plot_points(pcts2);
+        this->plot_points(pcts3);
+        // this->make_axis(axes);
+    }
+
+    void RadarChart::make_axis(size_t axes) {
+        /** Add tick marks to all axes */
+        SVG::Line tick;
+
+        for (float i = 0; i < axes; i++) {
+            for (float rad = 0.1; rad < 1; rad += 0.1) {
+                auto left_coord = polar.map(((i / axes) * 2 * PI) - 0.5, rad);
+                auto right_coord = polar.map(((i / axes) * 2 * PI) + 0.5, rad);
+
+                tick = SVG::Line(
+                    left_coord.first, right_coord.first,
+                    left_coord.second, right_coord.second
+                );
+
+                tick.set_attr("stroke", "black");
+                tick.set_attr("stroke-width", 2);
+                root.add_child(tick);
+            }
+        }
+    }
+
+    void RadarChart::plot_points(vector<float> percentages) {
+        /** Plot each of the percentages on an axis on the radar chart */
+        if (percentages.size() != n_axes)
+            throw std::runtime_error("Expected " + std::to_string(n_axes) + "data points"
+                + " but got " + std::to_string(percentages.size()));
+
+        // Add line connecting end of each axis
+        SVG::Path data_line;
+        std::pair<float, float> coord;
+
+        for (size_t i = 0; i < percentages.size(); i++) {
+            coord = axes[i]->along(percentages[i]); // Map percentage to SVG space
+            data_line.line_to(coord.first, coord.second);
+        }
+
+        data_line.to_origin();
+        data_line.set_attr("stroke-width", 2)
+            .set_attr("fill", "none").set_attr("stroke", "blue");
+
+        root.add_child(data_line);
+    }
+
+    void RadarChart::to_svg(const std::string filename) {
+        /** Generate an SVG */
+        std::ofstream svg_file(filename, std::ios_base::binary);
+        svg_file << this->root.to_string();
+        svg_file.close();
+    }
+
+    std::pair<float, float> PolarCoordinates::center() {
+        return std::make_pair(this->x, this->y);
+    }
+
+    std::pair<float, float> PolarCoordinates::map(float degrees, float percent) {
+        float x = percent * radius * cos(degrees) + this->x;
+        float y = percent * radius * sin(degrees) + this->y;
+        return std::make_pair(x, y);
     }
 }

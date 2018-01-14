@@ -36,6 +36,7 @@ int cli_join(deque<string>);
 int cli_hist(deque<string>, deque<string>, unordered_map<string, string>);
 int cli_scatter(deque<string>, unordered_map<string, string>);
 int cli_bar(deque<string>, unordered_map<string, string>);
+int cli_radar(deque<string> str_args, unordered_map<string, string> options);
 
 string join(deque<string> in, int a, int b, string delim=" ") {
 	string ret_str;
@@ -180,6 +181,8 @@ int main(int argc, char* argv[]) {
             return cli_scatter(str_args, options);
         else if (command == "bar")
             return cli_bar(str_args, options);
+        else if (command == "radar")
+            return cli_radar(str_args, options);
 		else
             head(command, 100); // Assume first arg is a filename
 	}
@@ -522,6 +525,15 @@ int cli_bar(deque<string> str_args,
     Graphs::BarChart bar(file, x, y, options);
     bar.generate();
     bar.to_svg(file + ".svg");
+
+    return 0;
+}
+
+int cli_radar(deque<string> str_args,
+    unordered_map<string, string> options) {
+
+    Graphs::RadarChart radar(12);
+    radar.to_svg("test.svg");
 
     return 0;
 }

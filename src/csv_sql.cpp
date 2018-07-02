@@ -1,6 +1,4 @@
 #include "shuffle.h"
-#include <stdio.h>
-#include <set>
 
 using namespace csv;
 using std::vector;
@@ -90,40 +88,32 @@ namespace shuffle {
             * @param[in] nrows    Number of rows to examine
             */
 
-            // TODO: Rewrite this
-            CSVStat stat(guess_format(filename).delim);
-            stat.read_csv(filename, nrows, true);
-            stat.calc(false, false, true);
-
+            CSVStat stat(filename);
             vector<string> sqlite_types;
             auto dtypes = stat.get_dtypes();
-            size_t most_common_dtype = 0, max_count = 0;
+
+            auto most_common_finder = [](
+                const std::pair<DataType, RowCount>& left,
+                const std::pair<DataType, RowCount>& right
+                ) { return left.second < right.second; };
 
             // Loop over each column
-            for (auto col_it = dtypes.begin(); col_it != dtypes.end(); ++col_it) {
-                most_common_dtype = 0;
-                max_count = 0;
+            for (auto& col: dtypes) {
+                // Aggregate integer types
+                col[CSV_INT] = col[CSV_LONG_INT] + col[CSV_LONG_LONG_INT];
 
-                // Loop over candidate data types
-                for (size_t dtype = 0; dtype <= 3; dtype++) {
-                    try {
-                        if ((size_t)col_it->at(dtype) > max_count) {
-                            max_count = col_it->at(dtype);
-                            most_common_dtype = dtype;
-                        }
-                    }
-                    catch (std::out_of_range) {}
-                }
+                DataType most_common_dtype = std::max_element(col.begin(), col.end(),
+                    most_common_finder)->first;
 
                 switch (most_common_dtype) {
                 case 0:
-                case 1:
+                case CSV_STRING:
                     sqlite_types.push_back("string");
                     break;
-                case 2:
+                case CSV_INT:
                     sqlite_types.push_back("integer");
                     break;
-                case 3:
+                case CSV_DOUBLE:
                     sqlite_types.push_back("float");
                     break;
                 }
@@ -134,10 +124,8 @@ namespace shuffle {
 
         std::string create_table(std::string filename, std::string table) {
             /** Generate a CREATE TABLE statement */
-            CSVReader temp(filename);
-            temp.close();
             string sql_stmt = "CREATE TABLE " + table + " (";
-            vector<string> col_names = sql_sanitize(temp.get_col_names());
+            vector<string> col_names = sql_sanitize(get_col_names(filename));
             vector<string> col_types = sqlite_types(filename);
 
             for (size_t i = 0; i < col_names.size(); i++) {
@@ -152,12 +140,10 @@ namespace shuffle {
 
         std::string insert_values(std::string filename, std::string table) {
             /** Generate an INSERT VALUES statement with placeholders
-            *  in accordance with the SQLite C API
-            */
+             *  in accordance with the SQLite C API
+             */
 
-            CSVReader temp(filename);
-            temp.close();
-            vector<string> col_names = temp.get_col_names();
+            vector<string> col_names = get_col_names(filename);
             string sql_stmt = "INSERT INTO " + table + " VALUES (";
 
             for (size_t i = 1; i <= col_names.size(); i++) {
@@ -192,11 +178,10 @@ namespace shuffle {
             *  @param[out] table     Name of the table (default: filename)
             */
 
-        CSVReader infile(csv_file);
+        CSVReader reader(csv_file);
 
         // Default file name is CSV file minus extension
-        if (table == "")
-            table = helpers::get_filename_from_path(csv_file);
+        if (table == "") table = helpers::get_filename_from_path(csv_file);
         table = sql::sql_sanitize(table);
 
         SQLite::Conn db(db_name);
@@ -206,28 +191,26 @@ namespace shuffle {
         std::string insert_query = sql::insert_values(csv_file, table);
         auto insert_stmt = db.prepare(insert_query);
 
-        vector<CSVField> row;
-        std::string str_value;
-        long long int int_value;
-        double dbl_value;
-
-        while (infile.read_row(row)) {
-            for (size_t i = 0; i < row.size(); i++) {
-                switch (row[i].dtype) {
-                case _null: // Empty String
-                case _string:
-                    str_value = row[i].get_string();
-                    insert_stmt.bind(i, str_value);
+        for (auto& row: reader) {
+            size_t i = 0;
+            for (auto& field: row) {
+                switch (field.type()) {
+                case CSV_NULL:
+                    insert_stmt.bind(i, nullptr);
                     break;
-                case _int:
-                    int_value = row[i].get_int();
-                    insert_stmt.bind(i, int_value);
+                case CSV_STRING:
+                    insert_stmt.bind(i, field.get<std::string>());
                     break;
-                case _float:
-                    dbl_value = row[i].get_float();
-                    insert_stmt.bind(i, dbl_value);
+                case CSV_INT:
+                case CSV_LONG_INT:
+                case CSV_LONG_LONG_INT:
+                    insert_stmt.bind(i, field.get<int>());
                     break;
+                default:
+                    insert_stmt.bind(i, field.get<double>());
                 }
+
+                i++;
             }
 
             insert_stmt.next();
@@ -236,6 +219,7 @@ namespace shuffle {
         insert_stmt.commit();
     }
 
+    /**
     void csv_join(std::string filename1, std::string filename2, std::string outfile,
         std::string column1, std::string column2) {
 
@@ -287,4 +271,15 @@ namespace shuffle {
         db.close();
         remove("temp.sqlite");
     }
+    **/
+}
+
+int main(int argc, char** argv) {
+    if (argc < 3) {
+        std::cout << "Usage: " << argv[0] << " " << "[in] [out]" << std::endl;
+        exit(1);
+    }
+
+    shuffle::csv_to_sql(argv[1], argv[2], "_table");
+    return 0;
 }

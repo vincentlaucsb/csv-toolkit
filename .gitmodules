@@ -7,3 +7,9 @@
 [submodule "tests/csv-data"]
 	path = tests/csv-data
 	url = https://github.com/vincentlaucsb/csv-data.git
+[submodule "include/external/sqlite-cpp"]
+	path = include/external/sqlite-cpp
+	url = https://github.com/vincentlaucsb/sqlite-cpp.git
+[submodule "include/external/csv-parser"]
+	path = include/external/csv-parser
+	url = https://github.com/vincentlaucsb/csv-parser.git

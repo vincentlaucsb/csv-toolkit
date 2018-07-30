@@ -1,4 +1,4 @@
-/** @shuffle */
+/** @toolkit */
 
 #pragma once
 #include <csv_parser.hpp>
@@ -17,21 +17,15 @@
 #include <math.h>
 #include <unordered_map>
 #include <set>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
 
-namespace shuffle {
+namespace toolkit {
     /** @file */
-    /** @name Search Functions */
-    ///@{
-    void head(std::string infile, int nrow = 100, std::vector<int> subset = {});
-    void grep(std::string infile, int col, std::string match, int max_rows = 500);
-    ///@}
+    using namespace csv;
+    using CSVColumns = std::unordered_map<std::string, DataType>;
 
     /** @name SQLite Functions
-        *  Functions built using the SQLite3 API
-        */
+     *  Functions built using the SQLite3 API
+     */
     ///@{
     void csv_to_sql(std::string csv_file, std::string db,
         std::string table = "");

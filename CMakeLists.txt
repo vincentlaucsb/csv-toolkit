@@ -12,17 +12,24 @@ else()
 	set(CMAKE_CXX_FLAGS_DEBUG "-Og -g -lgcov --coverage")
 endif(MSVC)
 
-set(SOURCES
-	src/csv_sql.cpp
-)
 set(TEST_SOURCES
-	tests/catch.hpp
-	tests/main.cpp
+	${CMAKE_SOURCE_DIR}/tests/catch.hpp
+	${CMAKE_SOURCE_DIR}/tests/main.cpp
 )
 
-include_directories(${CMAKE_SOURCE_DIR}/src/)
+include_directories(${CMAKE_SOURCE_DIR}/include/)
+include_directories(${CMAKE_SOURCE_DIR}/include/external/)
 include_directories(${CMAKE_SOURCE_DIR}/tests/)
 
 ## Executables
-add_executable(csv_sql src/csv_sql.cpp)
-target_link_libraries(csv_sql csv sqlite_cpp)
+add_executable(csvjson include/internal/csv_json.cpp)
+target_link_libraries(csvjson csv)
+
+add_executable(csvsql include/internal/csv_sql.cpp)
+target_link_libraries(csvsql csv sqlite_cpp)
+
+add_executable(csvpg include/internal/csv_postgres.cpp)
+target_link_libraries(csvpg csv)
+
+add_executable(csvtest ${TEST_SOURCES})
+target_link_libraries(csvtest csv)

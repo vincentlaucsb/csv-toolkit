@@ -1,10 +1,10 @@
-#include "shuffle.h"
+#include "toolkit.h"
 
 using namespace csv;
 using std::vector;
 using std::string;
 
-namespace shuffle {
+namespace toolkit {
     /** @file */
     namespace helpers {
         std::vector<std::string> split(
@@ -280,6 +280,6 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-    shuffle::csv_to_sql(argv[1], argv[2], "_table");
+    toolkit::csv_to_sql(argv[1], argv[2], "_table");
     return 0;
 }
